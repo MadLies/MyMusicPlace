@@ -1,0 +1,29 @@
+# Tablatura de armónica. Para generar el PDF:
+#   python3 Armonica/_Plantillas/tab2pdf.py Armonica/Flaca/02_editable/Flaca.tab
+#
+# Pasada de la notación de la fuente (01_referencias/fuente.txt):
+#   (n) → -n,  (n)b → -n',  las comas → _ (pausa entre frases)
+
+titulo: Flaca
+subtitulo: Andrés Calamaro · Alta Suciedad (1997)
+armonica: C
+tonalidad: Do mayor · 1ª posición
+
+> Transcripción de Ivan Vanioff, publicada en acordes.lacuerda.net. El ritmo no está marcado: escucha la canción mientras la lees.
+
+[Punteado | la melodía principal]
+6 5 -4 4 -4 5 6 5 -4 4 -4 -6 5 -4 4 -4 5 6 -5 -5
+-5 6 5 -4 4 -4 5 6 5 -4 4
+> El patrón «5 -4 4 -4 5 6» (Mi Re Do Re Mi Sol) se repite todo el tiempo: apréndelo primero solo.
+
+[Solo de saxo | primera mitad: mismo patrón del punteado]
+6 _ 5 -4 4 -4 5 6 _ 5 -4 4 -4 5 -6
+5 -4 4 -4 5 6 _ -5 -5
+5 6 _ 5 -4 4 -4 5 6 _ 5 -4 4
+
+[Solo de saxo | segunda mitad]
+3 -3 4 -4 5 -5 _ 5 5 _ -6 _ -6' -6'
+-7 _ -6 -6 5 -4 5 6 _ -5 -5
+-4 5 5 6 7 _ 5 -4 -4 6 -7
+5 -4 4
+> -6' es un bend: aspira el 6 y baja el tono de La a Sol♯ (mientras sale, toca -6). La subida «3 -3 4 -4 5 -5» es la escala de Do: un hoyo a la vez.

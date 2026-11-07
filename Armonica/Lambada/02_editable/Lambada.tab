@@ -1,0 +1,29 @@
+# Tablatura de armónica. Para generar el PDF:
+#   python3 Armonica/_Plantillas/tab2pdf.py Armonica/Lambada/02_editable/Lambada.tab
+#
+# Mismas notas que la transcripción original (01_referencias). La Parte A estaba
+# escrita dos veces; aquí va una vez con «se toca 2 veces», partida en sus dos frases.
+
+titulo: Lambada
+subtitulo: Kaoma · basada en «Llorando se fue», de Los Kjarkas
+armonica: C
+tonalidad: La menor (Am)
+
+> Orden: Parte A dos veces, luego Parte B. El ritmo no está marcado: cada línea es una frase; escucha la canción para seguir la duración de las notas.
+
+[Parte A | se toca 2 veces]
+5 8 -8 7 -7 -6
+-6 7 -7 -6 6 -6 5 -4 5
+> El primer 5 (Mi grave) salta una octava al 8 (Mi agudo). La frase baja paso a paso y termina en Mi: 5 -4 5.
+
+[Parte B]
+-8 -8 7 -5
+-5 -6 8 -8 7 -5
+-6 7 -7 -7 -6 6 6 -6 6 -6
+> Aparece el -5 (Fa), que no estaba en la Parte A. Termina en La (-6), la nota base de la canción.
+
+[Cómo practicarla]
+> 1. Practica solo el salto «5 8» varias veces: mueve la armónica rápido sin despegar los labios y caes justo en el hoyo 8.
+> 2. El final «5 -4 5» es soplar–aspirar–soplar entre dos hoyos vecinos: hazlo lento hasta que no se mezclen.
+> 3. El -5 suele sonar débil al principio: aspira suave y con la boca bien cerrada alrededor del hoyo.
+> 4. Toca encima de la grabación original para aprender el ritmo.

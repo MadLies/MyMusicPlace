@@ -1,0 +1,53 @@
+# Tablatura de armónica. Para generar el PDF:
+#   python3 Armonica/_Plantillas/tab2pdf.py Armonica/OneSummersDay/02_editable/OneSummersDay.tab
+#
+# Notas idénticas a la fuente (01_referencias/fuente.txt). Los nombres de las
+# partes (A, B, C, Final) los puse yo según cómo se repiten las frases.
+
+titulo: One Summer's Day
+subtitulo: Joe Hisaishi · El viaje de Chihiro · versión fácil
+armonica: C
+tonalidad: 1ª posición · sin bends · hoyos 3 a 6
+
+> Tablatura de harmonicasong.com. El ritmo no está marcado: cada línea es una frase; escucha la canción mientras la lees.
+
+[Parte A]
+5 5 -4 5 -4 5 6 5 -4 -4
+-4 -4 4 -4 4 -4 5 -4 4 -3 4
+3 -3 4 4 4 4 4
+3 -3 4 4 4 4 -3 4
+3 -3 4 4 4 4 4 6 4 -4
+
+[Parte A | repetición]
+5 5 -4 5 -4 5 6 5 -4 -4
+-4 -4 4 -4 4 -4 5 -4 4 -3 4
+3 -3 4 4 4 4 -3 4
+3 -3 4 4 4 4 4
+
+[Parte B]
+6 -5 5 -4
+5 -5 6 6
+6 6 -5 5 -4 -4 5 4
+5 -5 6 6
+6 6 -5 5 -4 -4 5
+
+[Parte C]
+4 -4 5 4 -4
+5 -5 6 6 -6 6 -5
+4 -4 5 5 -4 4 -4
+-4 -4 4 4 -3 4
+4 -4 5 -5 5
+5 -5 6 6 -6 6 -5
+4 -4 5 5 -4 4 -4
+5 5 -4 -4 4 -4
+
+[Final]
+5 -5 6 -5 -5 5 -5
+5 -5 6 -6
+-5 6 -6
+-6 6 -6
+
+[Cómo practicarla]
+> 1. Casi todo está en los hoyos 3 a 5, con pasos entre hoyos vecinos: es una buena canción para ganar precisión.
+> 2. En la Parte A, «3 -3 4 4 4 4» se repite mucho: el 4 soplado repetido debe sonar parejo, sin cortar el aire de golpe.
+> 3. -3 (Si) aspirado suele salir ahogado: aspira suave, sin forzar.

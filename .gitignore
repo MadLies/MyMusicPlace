@@ -1,0 +1,12 @@
+# Copias de seguridad de MuseScore
+.mscbackup/
+*.mscz~
+*.mscx~
+
+# Python
+__pycache__/
+*.pyc
+
+# Herramientas locales
+.playwright-mcp/
+.DS_Store

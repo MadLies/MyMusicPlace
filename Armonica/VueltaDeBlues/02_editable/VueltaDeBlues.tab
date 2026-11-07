@@ -1,0 +1,46 @@
+# Tablatura de armónica. Para generar el PDF:
+#   python3 Armonica/_Plantillas/tab2pdf.py Armonica/VueltaDeBlues/02_editable/VueltaDeBlues.tab
+
+titulo: Vuelta de blues
+subtitulo: Blues de 12 compases · 2ª posición («cross harp»)
+armonica: C
+tonalidad: Sol (G)
+forma: G7 G7 G7 G7 | C7 C7 G7 G7 | D7 C7 G7 D7
+frases: 1 1 1 1 | 2 2 3 3 | 4 4 5 5
+
+> Con una armónica en Do, el -2 (Sol) es la nota base: por eso la vuelta está en Sol. Se repite completa todas las veces que quieras; la frase 5 termina en Re (-4) para volver a empezar.
+
+[Frase 1 | compases 1–4 | Sol (I)]
+-2 _ _ -2 -2 _ -2 -2
+-2 -3 -4 5
+-4 -2-2 -2 -2
+> Sol repetido, luego sube Sol – Si – Re – Mi y vuelve a Sol.
+
+[Frase 2 | compases 5–6 | Do (IV)]
+4 44 44
+456
+-6 6 4 4 4 4
+> 4 5 6 soplados = Do – Mi – Sol, el acorde de Do. El -6 (La) es una nota de paso.
+
+[Frase 3 | compases 7–8 | Sol (I)]
+-2 _ _ -2 -2 _ -2 -2
+-2 -3 -4 5
+-4 -2-2 -2 -2
+> Igual que la frase 1.
+
+[Frase 4 | compases 9–10 | Re (V) → Do (IV)]
+-4 -4-4 -4-4 -4-4 -4
+4 44 44 44
+> Primera línea sobre Re (-4 = Re). Segunda línea baja un paso, a Do (4 soplado).
+
+[Frase 5 | compases 11–12 | Sol (I) → Re (V)]
+-2 _ _ -2 -2 _ -2 -2
+-2 -3 -4 5
+-4 -4 -4 -4
+> Empieza como la frase 1, pero termina en Re (-4): es el «turnaround», la nota que pide volver al principio.
+
+[Cómo practicarla]
+> 1. Toca cada frase por separado y despacio (metrónomo a 60). Busca que suene una sola nota a la vez.
+> 2. El -2 y el -3 aspirados suelen salir desafinados o ahogados al principio: aspira suave, con la boca y la garganta relajadas.
+> 3. Cuando salgan limpias, únelas en orden 1 → 2 → 3 → 4 → 5 y repite la vuelta completa.
+> 4. Busca una pista de acompañamiento «blues backing track in G» y toca encima: así sientes cuándo cambia cada acorde.

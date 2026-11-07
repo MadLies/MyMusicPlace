@@ -1,0 +1,44 @@
+# Tablatura de armónica. Para generar el PDF:
+#   python3 Armonica/_Plantillas/tab2pdf.py Armonica/ThePlaceIllReturnToSomeday/02_editable/ThePlaceIllReturnToSomeday.tab
+#
+# Convertida de la notación original (01_referencias): (n) → -n, (nb) → -n'
+# Los nombres de las partes los puse según cómo se repiten las frases.
+
+titulo: The Place I'll Return to Someday
+subtitulo: Tablatura para armónica diatónica
+armonica: C
+tonalidad: Re menor · 3ª posición
+
+> El ritmo no está marcado: cada línea es una frase. Escucha la canción mientras la lees.
+
+[Parte A]
+-4 5 -5 6 -6
+-7 7 -7 -6 6 -6 -5 5 -4 4
+-4 5 -5 6 -6
+-7 7 -7 -6 -6 -6' -6
+> Sube Re–Mi–Fa–Sol–La y baja hasta Do. La cuarta línea termina con un bend: «-6 -6' -6» es La, Sol♯, La.
+
+[Parte A | segunda vez, final distinto]
+-4 5 -5 6 -6
+-7 7 -7 -6 6 -6 -5 5 -4 4
+-5 -5 6 -5 5 -4 4 -6 5
+6 -5 5 5 4 -4
+
+[Parte B]
+-8 -6 -8 7 -7 -6 6
+-6 -5 6 -6 -7 7 7
+-8 -6 -8 7 -7 -6 6
+-5 -6 5 -4 -4' -4 -4
+> Parte aguda: empieza en -8 (Re agudo). «-4 -4' -4» es Re, Do♯, Re.
+
+[Parte B | otra vez]
+-8 -6 -8 7 -7 -6 6
+-6 -5 6 -6 -7 7 7
+-8 -6 -8 7 -7 -6 6
+-5 -6 5 -4 -4' -4
+> Igual que la anterior; termina en -4 (Re), la nota base de la canción.
+
+[Cómo practicarla]
+> 1. La escala «-4 5 -5 6 -6» (Re Mi Fa Sol La) abre la canción: practícala subiendo y bajando hasta que salga pareja.
+> 2. Bends: -6' (La → Sol♯) y -4' (Re → Do♯) bajan medio tono. Aspira, y lleva el aire hacia la garganta como diciendo «iii → uuu». Mientras salen, toca la nota sin bend.
+> 3. La Parte B salta entre -8 y -6 (saltas el hoyo 7): practica ese salto aparte.

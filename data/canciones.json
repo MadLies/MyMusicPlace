@@ -1,0 +1,204 @@
+{
+  "generado": "2026-11-07T11:54:47+00:00",
+  "canciones": [
+    {
+      "id": "armonica/Flaca",
+      "instrumento": "armonica",
+      "carpeta": "Flaca",
+      "titulo": "Flaca",
+      "subtitulo": "Andrés Calamaro · Alta Suciedad (1997)",
+      "tono": "C",
+      "tonalidad": "Do mayor · 1ª posición",
+      "tab": "Armonica/Flaca/02_editable/Flaca.tab",
+      "pdf": "Armonica/Flaca/03_exportados/pdf/Flaca.pdf",
+      "secciones": [
+        "Punteado",
+        "Solo de saxo",
+        "Solo de saxo"
+      ],
+      "stats": {
+        "notas": 96,
+        "bends": 2,
+        "aspiradas": 44,
+        "hoyoMin": 3,
+        "hoyoMax": 7,
+        "saltoMax": 2,
+        "nivel": 2
+      }
+    },
+    {
+      "id": "armonica/LaLeyendaDelHadaYElMago",
+      "instrumento": "armonica",
+      "carpeta": "LaLeyendaDelHadaYElMago",
+      "titulo": "La leyenda del hada y el mago",
+      "subtitulo": "Rata Blanca · Magos, espadas y rosas (1990)",
+      "tono": "C",
+      "tonalidad": "La menor (Am) · hoyos 6 a 10",
+      "tab": "Armonica/LaLeyendaDelHadaYElMago/02_editable/LaLeyendaDelHadaYElMago.tab",
+      "pdf": "Armonica/LaLeyendaDelHadaYElMago/03_exportados/pdf/LaLeyendaDelHadaYElMago.pdf",
+      "secciones": [
+        "Estrofa",
+        "Estribillo",
+        "Estrofa",
+        "Estribillo",
+        "Cómo practicarla"
+      ],
+      "stats": {
+        "notas": 249,
+        "bends": 0,
+        "aspiradas": 52,
+        "hoyoMin": 6,
+        "hoyoMax": 10,
+        "saltoMax": 3,
+        "nivel": 3
+      }
+    },
+    {
+      "id": "armonica/Lambada",
+      "instrumento": "armonica",
+      "carpeta": "Lambada",
+      "titulo": "Lambada",
+      "subtitulo": "Kaoma · basada en «Llorando se fue», de Los Kjarkas",
+      "tono": "C",
+      "tonalidad": "La menor (Am)",
+      "tab": "Armonica/Lambada/02_editable/Lambada.tab",
+      "pdf": "Armonica/Lambada/03_exportados/pdf/Lambada.pdf",
+      "secciones": [
+        "Parte A",
+        "Parte B",
+        "Cómo practicarla"
+      ],
+      "stats": {
+        "notas": 35,
+        "bends": 0,
+        "aspiradas": 60,
+        "hoyoMin": 4,
+        "hoyoMax": 8,
+        "saltoMax": 3,
+        "nivel": 2
+      }
+    },
+    {
+      "id": "armonica/OneSummersDay",
+      "instrumento": "armonica",
+      "carpeta": "OneSummersDay",
+      "titulo": "One Summer's Day",
+      "subtitulo": "Joe Hisaishi · El viaje de Chihiro · versión fácil",
+      "tono": "C",
+      "tonalidad": "1ª posición · sin bends · hoyos 3 a 6",
+      "tab": "Armonica/OneSummersDay/02_editable/OneSummersDay.tab",
+      "pdf": "Armonica/OneSummersDay/03_exportados/pdf/OneSummersDay.pdf",
+      "secciones": [
+        "Parte A",
+        "Parte A",
+        "Parte B",
+        "Parte C",
+        "Final",
+        "Cómo practicarla"
+      ],
+      "stats": {
+        "notas": 176,
+        "bends": 0,
+        "aspiradas": 40,
+        "hoyoMin": 3,
+        "hoyoMax": 6,
+        "saltoMax": 2,
+        "nivel": 1
+      }
+    },
+    {
+      "id": "armonica/Tetris",
+      "instrumento": "armonica",
+      "carpeta": "Tetris",
+      "titulo": "Tetris",
+      "subtitulo": "Korobéiniki (canción popular rusa) · tema del Tetris",
+      "tono": "C",
+      "tonalidad": "La menor (Am)",
+      "tab": "Armonica/Tetris/02_editable/Tetris.tab",
+      "pdf": "Armonica/Tetris/03_exportados/pdf/Tetris.pdf",
+      "secciones": [
+        "Parte A",
+        "Parte B",
+        "Cómo practicarla"
+      ],
+      "stats": {
+        "notas": 52,
+        "bends": 2,
+        "aspiradas": 56,
+        "hoyoMin": 6,
+        "hoyoMax": 10,
+        "saltoMax": 2,
+        "nivel": 3
+      }
+    },
+    {
+      "id": "armonica/ThePlaceIllReturnToSomeday",
+      "instrumento": "armonica",
+      "carpeta": "ThePlaceIllReturnToSomeday",
+      "titulo": "The Place I'll Return to Someday",
+      "subtitulo": "Tablatura para armónica diatónica",
+      "tono": "C",
+      "tonalidad": "Re menor · 3ª posición",
+      "tab": "Armonica/ThePlaceIllReturnToSomeday/02_editable/ThePlaceIllReturnToSomeday.tab",
+      "pdf": "Armonica/ThePlaceIllReturnToSomeday/03_exportados/pdf/ThePlaceIllReturnToSomeday.pdf",
+      "secciones": [
+        "Parte A",
+        "Parte A",
+        "Parte B",
+        "Parte B",
+        "Cómo practicarla"
+      ],
+      "stats": {
+        "notas": 112,
+        "bends": 3,
+        "aspiradas": 65,
+        "hoyoMin": 4,
+        "hoyoMax": 8,
+        "saltoMax": 4,
+        "nivel": 3
+      }
+    },
+    {
+      "id": "armonica/VueltaDeBlues",
+      "instrumento": "armonica",
+      "carpeta": "VueltaDeBlues",
+      "titulo": "Vuelta de blues",
+      "subtitulo": "Blues de 12 compases · 2ª posición («cross harp»)",
+      "tono": "C",
+      "tonalidad": "Sol (G)",
+      "tab": "Armonica/VueltaDeBlues/02_editable/VueltaDeBlues.tab",
+      "pdf": "Armonica/VueltaDeBlues/03_exportados/pdf/VueltaDeBlues.pdf",
+      "secciones": [
+        "Frase 1",
+        "Frase 2",
+        "Frase 3",
+        "Frase 4",
+        "Frase 5",
+        "Cómo practicarla"
+      ],
+      "stats": {
+        "notas": 70,
+        "bends": 0,
+        "aspiradas": 67,
+        "hoyoMin": 2,
+        "hoyoMax": 6,
+        "saltoMax": 2,
+        "nivel": 1
+      }
+    },
+    {
+      "id": "piano/NoviembreSinTi",
+      "instrumento": "piano",
+      "carpeta": "NoviembreSinTi",
+      "titulo": "Noviembre Sin Ti",
+      "subtitulo": "Juan David Wilches",
+      "musicxml": "Piano/NoviembreSinTi/03_exportados/musicxml/NoviembreSinTi.musicxml",
+      "pdf": "Piano/NoviembreSinTi/03_exportados/pdf/NoviembreSinTi.pdf",
+      "mscz": "Piano/NoviembreSinTi/02_editable/NoviembreSinTi.mscz",
+      "notas": "Piano/NoviembreSinTi/Analisis_y_plan.md",
+      "extras": [
+        "Piano/NoviembreSinTi/03_exportados/pdf/Analisis_y_plan.pdf"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+# Tablatura de armónica. Para generar el PDF:
+#   python3 Armonica/_Plantillas/tab2pdf.py Armonica/LaLeyendaDelHadaYElMago/02_editable/LaLeyendaDelHadaYElMago.tab
+#
+# Convertida de la notación original (01_referencias): (n) → -n.
+# Los espacios largos del original son _ (pausa). La letra no se incluye.
+
+titulo: La leyenda del hada y el mago
+subtitulo: Rata Blanca · Magos, espadas y rosas (1990)
+armonica: C
+tonalidad: La menor (Am) · hoyos 6 a 10
+
+> Orden: Estrofa (1ª) → Estribillo (1ª) → Estrofa (2ª) → Estribillo (2ª) → solo de guitarra → Estrofa (3ª) → Estribillo (3ª). La 2ª y la 3ª vez son idénticas. El ritmo no está marcado: cada línea es un verso; sigue la canción.
+
+[Estrofa | 1ª vez]
+8 8 8 8 -8 7 -8 -8 -8 -8 7 -7 7 7 7 7 -7 -6 -7
+8 8 8 8 -8 7 -8 -8 -8 -8 7 -7 7 7 7 7 -7 -6 6 -6
+8 8 8 8 -8 7 -8 -8 -8 -8 7 -7 7 7 7 7 -7 -6 -7
+8 8 8 8 -8 7 -8 -8 -8 -8 7 -7 7 7 7 -7 -6 6 -6
+
+[Estribillo | 1ª vez]
+-6 -7 7 -7 7 -8 7 _ 7 -8 8 8
+-9 8 -8 7 -7 -6 -7 _ -6 -7 -6 -6 6
+8 -9 9 9 -9 8 -9 _ -8 8 -9 -9 8
+-9 8 -8 7 -7 -6 -7 _ -7 7 -7 -9 8
+
+[Estrofa | 2ª y 3ª vez]
+8 8 8 8 -8 7 -8 -8 -8 -8 7 -7 7 7 7 7 -7 -6 -7
+8 8 8 8 -8 7 -8 -8 -8 -8 7 -7 7 7 7 -7 -6 6 -6
+8 8 8 8 -8 7 -8 -8 -8 -8 7 -7 7 7 7 7 -7 -6 -7
+8 8 8 8 -8 7 -8 -8 -8 -8 7 -7 7 7 7 -7 -6 6 -6
+> Igual que la 1ª vez, salvo la línea 2: lleva un 7 menos (queda igual que la línea 4).
+
+[Estribillo | 2ª y 3ª vez]
+-6 -7 7 -7 7 -8 7 _ 7 -8 8 8
+-9 8 -8 7 -7 -6 -7 _ -6 -7 -6 -6 6
+8 -9 9 9 -9 8 -9 _ -8 8 -9 -9 8 -8 8
+-9 8 -8 7 -7 -6 -7 _ -7 7 -7 -10 9
+> Cambian las dos últimas líneas: la 3ª añade «-8 8» al final y la 4ª termina en «-10 9» (La, Sol agudos).
+
+[Cómo practicarla]
+> 1. Todo está en la zona aguda (hoyos 6 a 10): necesita poco aire. Sopla y aspira suave para que no suene chillón.
+> 2. La estrofa empieza con «8 8 8 8 -8 7 -8 -8 -8 -8»: quédate fijo en el hoyo 8 y solo cambia entre soplar y aspirar.
+> 3. El estribillo sube al 9 y al -10: practica aparte «8 -9 9 9 -9 8 -9» hasta que salga limpio.
+> 4. Los versos son largos: toca encima de la grabación para saber dónde va cada nota.
