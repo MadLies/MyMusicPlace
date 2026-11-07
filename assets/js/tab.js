@@ -2,7 +2,30 @@
 // y conversor desde otras notaciones habituales: (4) = aspirar, +4 = soplar, 6b = bend.
 
 const NOTA_RE = /-?(?:10|[1-9])['/]*/g;
-const CLAVES = new Set(["titulo", "subtitulo", "armonica", "tonalidad", "forma", "frases", "autor", "fuente"]);
+const CLAVES = new Set(["titulo", "subtitulo", "armonica", "tonalidad", "forma", "frases", "autor", "fuente", "tempo", "compas"]);
+
+// Duración opcional al final de un token: 8:2  -7:1.5  7:1/2  _:2  -2-2:2
+const DUR_RE = /^(.*?)(?::(\d+(?:[.,]\d+)?(?:\/\d+)?))?$/;
+export function leerDuracion(txt) {
+  if (txt === undefined) return null;
+  const [a, b] = txt.replace(",", ".").split("/");
+  const v = b ? Number(a) / Number(b) : Number(a);
+  return Number.isFinite(v) && v > 0 && v <= 32 ? v : NaN;
+}
+
+/** Lee un token de tablatura. Devuelve {tipo, notas?, dur, conDur} o {error}. */
+export function leerToken(tok) {
+  const m = DUR_RE.exec(tok);
+  const base = m[1];
+  const dur = leerDuracion(m[2]);
+  if (Number.isNaN(dur)) return { error: `Duración inválida en «${tok}» (usa por ejemplo :2, :1.5 o :1/2)` };
+  const conDur = dur !== null;
+  if (base === "_") return { tipo: "pausa", dur: dur ?? 1, conDur };
+  if (base === "|" && !conDur) return { tipo: "barra" };
+  const notas = base.match(NOTA_RE) || [];
+  if (!base || notas.join("") !== base) return { error: `No entiendo «${tok}» (hoyos 1 a 10, - para aspirar, ' para bend, _ pausa, | barra, :2 duración)` };
+  return { tipo: "grupo", notas: notas.map(parsearNota), dur: dur ?? 1, conDur };
+}
 
 export function parsearNota(raw) {
   const m = /^(-?)(10|[1-9])(['/]*)$/.exec(raw);
@@ -11,7 +34,7 @@ export function parsearNota(raw) {
 
 export function leerTab(texto) {
   const meta = {}, intro = [], secciones = [], errores = [];
-  let actual = null;
+  let actual = null, conRitmo = false;
   texto.split(/\r?\n/).forEach((raw, i) => {
     const num = i + 1;
     const linea = raw.trim();
@@ -37,18 +60,21 @@ export function leerTab(texto) {
     }
     const tokens = [];
     for (const tok of linea.split(/\s+/)) {
-      if (tok === "_") { tokens.push({ tipo: "pausa" }); continue; }
-      if (tok === "|") { tokens.push({ tipo: "barra" }); continue; }
-      const notas = tok.match(NOTA_RE) || [];
-      if (notas.join("") !== tok) {
-        errores.push({ linea: num, msg: `No entiendo «${tok}» (hoyos 1 a 10, - para aspirar, ' para bend, _ pausa, | barra)` });
-        continue;
-      }
-      tokens.push({ tipo: "grupo", notas: notas.map(parsearNota) });
+      const t = leerToken(tok);
+      if (t.error) { errores.push({ linea: num, msg: t.error }); continue; }
+      if (t.conDur) conRitmo = true;
+      tokens.push(t);
     }
     actual.items.push({ tipo: "tab", tokens, linea: num });
   });
-  return { meta, intro, secciones, errores };
+  // Con ritmo escrito (duraciones o tempo:), la reproducción no añade pausas de respiración al final de cada línea.
+  return { meta, intro, secciones, errores, conRitmo: conRitmo || Boolean(meta.tempo) };
+}
+
+/** true si la línea ya está escrita en formato .tab válido (para no tocarla al convertir). */
+export function esLineaTab(linea) {
+  const toks = linea.trim().split(/\s+/);
+  return toks.length > 0 && toks.every((t) => !leerToken(t).error) && toks.some((t) => /\d/.test(t));
 }
 
 // Convierte notaciones comunes al formato .tab.
@@ -65,7 +91,12 @@ export function convertirNotacion(texto) {
     const l = raw.trim();
     if (!l) { salida.push(""); continue; }
     if (/^[#>]/.test(l) || /^\[.*\]$/.test(l)) { if (l.startsWith("[")) haySeccion = true; salida.push(l); continue; }
-    if (/^(titulo|subtitulo|armonica|tonalidad|forma|frases|autor|fuente)\s*:/i.test(l)) { salida.push(l); continue; }
+    if (/^(titulo|subtitulo|armonica|tonalidad|forma|frases|autor|fuente|tempo|compas)\s*:/i.test(l)) { salida.push(l); continue; }
+    if (/:/.test(l) && esLineaTab(l)) {
+      if (!haySeccion) { salida.push("[Melodía]"); haySeccion = true; secciones++; }
+      salida.push(l.trim());
+      continue;
+    }
 
     if (/^[\d\s()+\-'’/bB,|_.]+$/.test(l) && /\d/.test(l)) {
       const partes = [];
@@ -140,12 +171,15 @@ subtitulo: Artista
 armonica: C
 tonalidad: Do mayor · 1ª posición
 fuente: Tablatura recopilada y adaptada por madlies
+tempo: 90
+compas: 4
 
 > Una nota corta sobre la canción (opcional).
 
+# Ritmo: una nota sola dura 1 pulso; 6:2 dura 2; 5:1.5 es negra con puntillo; 44 son dos rápidas.
 [Parte A]
-4 4 -4 5 | 5 -5 6 _
-6 -6 6 -5 5 -4 4
+4 4 -4 5 | 5 -5 6:2
+6 -6 6 -5 | 5:1.5 -4:1/2 4:2
 
 [Parte B | se toca 2 veces]
 5 5 -5 6 6 -6 -7 7

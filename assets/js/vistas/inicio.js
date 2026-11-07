@@ -25,7 +25,7 @@ function tarjeta(c) {
   } else {
     etiquetas.push(INSTR[c.instrumento].nombre);
     if (c.musicxml) etiquetas.push("partitura interactiva");
-    if (c.notas) etiquetas.push("análisis y plan");
+    if (c.notas) etiquetas.push(c.instrumento === "piano" ? "análisis y plan" : "guía de estudio");
   }
   const total = c.secciones?.length || 0;
   const pct = total ? porcentaje(c.id, total) : 0;

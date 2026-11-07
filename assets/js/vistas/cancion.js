@@ -19,6 +19,9 @@ export async function mostrar(main, [carpeta]) {
   const st = estadisticas(tab) || {};
   const progreso = progresoDe(c.id);
   let tono = normalizarTono(pref(`tono:${c.id}`, tab.meta.armonica || c.tono || "C"));
+  const tempoOriginal = Math.min(240, Math.max(30, Number(tab.meta.tempo) || 0)) || null;
+  const tempoInicial = progreso.tempo || tempoOriginal || 80;
+  const compas = Math.min(12, Math.max(1, parseInt(tab.meta.compas, 10) || 4));
 
   main.innerHTML = `
     <a class="volver" href="#/">${icono("volver")} Biblioteca</a>
@@ -52,8 +55,9 @@ export async function mostrar(main, [carpeta]) {
           <button type="button" class="btn-icono" data-accion="siguiente" title="Nota siguiente (→)" aria-label="Nota siguiente">${icono("sig")}</button>
         </div>
         <label class="tempo">Tempo
-          <input type="range" min="40" max="180" step="5" value="${progreso.tempo || 80}" data-accion="tempo" aria-label="Tempo en pulsos por minuto">
-          <output>${progreso.tempo || 80}</output>
+          <input type="range" min="30" max="240" step="2" value="${tempoInicial}" data-accion="tempo" aria-label="Tempo en pulsos por minuto">
+          <output>${tempoInicial}</output>
+          ${tempoOriginal ? `<button type="button" class="btn-mini" data-accion="tempo-original" title="Volver al tempo de la canción">♩=${tempoOriginal}</button>` : ""}
         </label>
         <button type="button" class="btn btn-mic" data-accion="mic" aria-pressed="false" title="Toca tú: la tablatura avanza cuando el micrófono oye la nota correcta (M)">${icono("mic")}<span>Tocar con micrófono</span></button>
       </div>
@@ -64,6 +68,7 @@ export async function mostrar(main, [carpeta]) {
         <label class="interruptor"><input type="checkbox" data-accion="nombres" ${pref("nombres", true) ? "checked" : ""}> Nombres de notas</label>
         <label class="interruptor"><input type="checkbox" data-accion="memoria"> Ocultar números (memoria)</label>
         <label class="interruptor"><input type="checkbox" data-accion="metronomo"> Metrónomo</label>
+        <label class="interruptor" title="Un compás de clics antes de empezar"><input type="checkbox" data-accion="cuenta" ${pref("cuentaEntrada", false) ? "checked" : ""}> Cuenta de entrada</label>
         <label class="interruptor"><input type="checkbox" data-accion="ver-armonica" ${pref("verArmonica", true) ? "checked" : ""}> Ver armónica</label>
         <label class="interruptor" title="Mientras suena o tocas con el micrófono, baja la página solo cuando la nota sale de la pantalla"><input type="checkbox" data-accion="seguir" ${pref("seguirNota", false) ? "checked" : ""}> Seguir la nota</label>
       </div>
@@ -78,7 +83,7 @@ export async function mostrar(main, [carpeta]) {
     ${tab.errores.length ? `<div class="aviso">La tablatura tiene ${tab.errores.length} línea(s) que no entendí: ${tab.errores.map((e) => `línea ${e.linea}: ${esc(e.msg)}`).join("; ")}</div>` : ""}
     ${leyendaHTML(tono)}
     <div class="tab" id="tab"></div>
-    <p class="atajos-teclado">Teclado: <kbd>Espacio</kbd> escuchar/pausar · <kbd>←</kbd> <kbd>→</kbd> nota a nota · <kbd>M</kbd> micrófono. El ritmo de la tablatura es aproximado: cada nota dura un pulso, las notas unidas se reparten el pulso y cada línea termina con una pausa para respirar.</p>`;
+    <p class="atajos-teclado">Teclado: <kbd>Espacio</kbd> escuchar/pausar · <kbd>←</kbd> <kbd>→</kbd> nota a nota · <kbd>M</kbd> micrófono. ${tab.conRitmo ? `Esta tablatura tiene el ritmo escrito${tempoOriginal ? ` (♩=${tempoOriginal}, compás de ${compas})` : ""}: las notas largas llevan una cola y las cortas su fracción de pulso.` : "Esta tablatura no tiene el ritmo escrito: cada nota dura un pulso, las notas unidas se reparten el pulso y cada línea termina con una pausa para respirar. Puedes añadirlo en el editor (por ejemplo <code>6:2</code> dura dos pulsos)."}</p>`;
 
   const $ = (s) => main.querySelector(s);
   const tabEl = $("#tab");
@@ -100,7 +105,9 @@ export async function mostrar(main, [carpeta]) {
       btnPlay.classList.toggle("sonando", sonando);
     },
   });
-  rep.tempo = progreso.tempo || 80;
+  rep.tempo = tempoInicial;
+  rep.compas = compas;
+  rep.cuentaEntrada = pref("cuentaEntrada", false);
   let seguir = pref("seguirNota", false);
 
   function marcar(i, ev) {
@@ -294,6 +301,7 @@ export async function mostrar(main, [carpeta]) {
       case "nombres": tabEl.classList.toggle("sin-nombres", !t.checked); setPref("nombres", t.checked); break;
       case "memoria": tabEl.classList.toggle("memoria", t.checked); break;
       case "metronomo": rep.metronomo = t.checked; break;
+      case "cuenta": rep.cuentaEntrada = t.checked; setPref("cuentaEntrada", t.checked); break;
       case "ver-armonica": $(".armonica-cont").hidden = !t.checked; setPref("verArmonica", t.checked); break;
       case "seguir": seguir = t.checked; setPref("seguirNota", t.checked); break;
       case "aprendida": {
@@ -311,6 +319,11 @@ export async function mostrar(main, [carpeta]) {
     tempo.nextElementSibling.textContent = tempo.value;
   });
   tempo.addEventListener("change", () => actualizar(c.id, { tempo: Number(tempo.value) }));
+  $('[data-accion="tempo-original"]')?.addEventListener("click", () => {
+    tempo.value = tempoOriginal;
+    tempo.dispatchEvent(new Event("input"));
+    actualizar(c.id, { tempo: null });
+  });
 
   function teclado(e) {
     if (/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName) && e.target.type !== "checkbox" && e.target.type !== "range") return;

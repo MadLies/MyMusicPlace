@@ -76,3 +76,13 @@ export function posiciones(tono) {
     { num: 4, nombre: "4ª posición", tonalidad: p(9, " menor"), uso: "Menor natural (relativa): Tetris, Lambada.", base: "-6 aspirado" },
   ];
 }
+
+// Violín en 1ª posición: dónde se toca cada nota (cuerda y dedo).
+const VIOLIN = { 55: ["Sol", 0], 56: ["Sol", 1], 57: ["Sol", 1], 58: ["Sol", 2], 59: ["Sol", 2], 60: ["Sol", 3], 61: ["Sol", 3],
+  62: ["Re", 0], 63: ["Re", 1], 64: ["Re", 1], 65: ["Re", 2], 66: ["Re", 2], 67: ["Re", 3], 68: ["Re", 3],
+  69: ["La", 0], 70: ["La", 1], 71: ["La", 1], 72: ["La", 2], 73: ["La", 2], 74: ["La", 3], 75: ["La", 3],
+  76: ["Mi", 0], 77: ["Mi", 1], 78: ["Mi", 1], 79: ["Mi", 2], 80: ["Mi", 2], 81: ["Mi", 3], 82: ["Mi", 3], 83: ["Mi", 4] };
+export function posicionViolin(midi) {
+  const p = VIOLIN[Math.round(midi)];
+  return p ? { cuerda: p[0], dedo: p[1], texto: `cuerda ${p[0]}, ${p[1] === 0 ? "al aire" : `${p[1]}º dedo`}` } : null;
+}

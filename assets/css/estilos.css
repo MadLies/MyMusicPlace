@@ -216,7 +216,10 @@ select, input[type="search"], textarea { font: inherit; color: var(--text); back
 .memoria .n b::after { content: "?"; color: var(--muted); position: absolute; inset: 0; text-align: center; }
 .memoria .n.activa b, .memoria .n:hover b { color: inherit; }
 .memoria .n.activa b::after, .memoria .n:hover b::after { content: none; }
-.pausa { display: inline-block; width: 22px; height: 2px; margin-bottom: 20px; border-bottom: 2px dotted var(--muted); }
+.pausa { display: inline-block; width: calc(22px * var(--d, 1)); height: 2px; margin-bottom: 20px; border-bottom: 2px dotted var(--muted); }
+.cola { display: inline-block; align-self: center; width: calc(26px * var(--d)); height: 4px; margin-left: -4px; border-radius: 0 3px 3px 0; background: var(--line); background-image: repeating-linear-gradient(90deg, transparent 0 22px, var(--bg) 22px 26px); }
+.n { position: relative; }
+.n .dur { position: absolute; top: -7px; right: -6px; font-style: normal; font-size: .62rem; line-height: 1; padding: 2px 3px; border-radius: 6px; background: var(--text); color: var(--bg); font-weight: 700; }
 .pausa.activa { border-bottom-color: var(--accent); border-bottom-style: solid; }
 .barra { display: inline-block; width: 2px; align-self: stretch; background: var(--muted); margin: 0 4px; border-radius: 1px; }
 .atajos-teclado { color: var(--muted); font-size: .85rem; margin-top: 18px; }
@@ -225,7 +228,7 @@ select, input[type="search"], textarea { font: inherit; color: var(--text); back
 .pestanas { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
 .pestanas button { font: inherit; background: none; border: 0; border-bottom: 2px solid transparent; padding: 8px 12px; color: var(--muted); cursor: pointer; margin-bottom: -1px; }
 .pestanas button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
-.partitura { background: #fff; border-radius: var(--radio); border: 1px solid var(--line); padding: 8px; overflow-x: auto; min-height: 200px; color: #111; }
+.partitura { background: #fff; border-radius: var(--radio); border: 1px solid var(--line); padding: 8px 0; overflow-x: auto; min-height: 200px; color: #111; }
 :root[data-theme="dark"] .partitura { filter: invert(.9) hue-rotate(180deg); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .partitura { filter: invert(.9) hue-rotate(180deg); } }
 .partitura .vf-measure { cursor: pointer; }
@@ -309,6 +312,7 @@ pre.codigo { background: var(--surface); border: 1px solid var(--line); border-r
 .est-barra .poco { background: var(--aspira); }
 .campo { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 4px 0; max-width: 100%; }
 .campo select { flex: 0 1 auto; min-width: 0; max-width: 100%; }
+.campo input[type="range"] { accent-color: var(--accent); }
 .teclas { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: 8px 0; }
 .tecla { font: inherit; font-size: .85rem; padding: 10px 0; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; }
 .tecla.negra { background: var(--text); color: var(--bg); }
@@ -352,6 +356,32 @@ pre.codigo { background: var(--surface); border: 1px solid var(--line); border-r
 .consejos li.ok { color: var(--ok); }
 td.ok { color: var(--ok); font-weight: 600; }
 td.alto, td.bajo { color: #b07400; font-weight: 600; }
+
+/* Metrónomo */
+.metro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; margin-top: 12px; }
+.metro-panel { position: sticky; top: 72px; text-align: center; }
+.metro-tempo { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 8px; }
+.metro-bpm { display: flex; flex-direction: column; align-items: center; }
+.metro-bpm output { font-size: 4.2rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.metro-bpm span { color: var(--muted); font-size: .9rem; }
+.metro-slider { width: 100%; margin: 16px 0 8px; accent-color: var(--accent); }
+.metro-luces { display: flex; justify-content: center; gap: 12px; margin: 18px 0; min-height: 30px; transition: opacity .2s; }
+.metro-luces i { width: 26px; height: 26px; border-radius: 50%; background: var(--surface-2); border: 2px solid var(--line); transition: background .05s, transform .05s; }
+.metro-luces i.fuerte { border-color: var(--accent); }
+.metro-luces i.medio { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
+.metro-luces i.on { background: var(--text); transform: scale(1.15); }
+.metro-luces i.fuerte.on { background: var(--accent); }
+.metro-luces.mudo { opacity: .35; }
+.metro-botones { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+.metro-start { min-width: 150px; justify-content: center; font-size: 1.05rem; padding: 12px 20px; }
+.metro-tap { min-width: 150px; justify-content: center; padding: 12px 18px; }
+.metro-tap.pulsado { background: var(--accent-soft); border-color: var(--accent); }
+.metro-ayuda { margin-top: 14px; }
+.metro-opciones h2:first-child { margin-top: 0; }
+.metro-filas { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 8px 0; font-size: .92rem; color: var(--muted); }
+.metro-filas input { width: 62px; font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 4px 6px; }
+.metro-estado { margin-top: 14px; color: var(--accent); font-weight: 600; min-height: 1.5em; }
+@media (max-width: 860px) { .metro { grid-template-columns: minmax(0, 1fr); } .metro-panel { position: static; } }
 
 /* Editor */
 .editor { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 20px; align-items: start; margin-top: 12px; }

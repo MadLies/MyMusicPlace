@@ -9,7 +9,10 @@ Partituras de piano y violín y tablaturas de armónica, organizadas por instrum
 - **Tablaturas interactivas**: toca una nota para oírla; *Escuchar* ilumina la tablatura nota a
   nota con tempo ajustable; repite una parte en bucle; avanza con las flechas del teclado.
 - **Armónica dibujada**: muestra qué hoyo tocar y si se sopla o se aspira, en el tono de tu armónica.
-- **Tocar con micrófono**: tú tocas y la tablatura avanza cuando oye la nota correcta.
+- **Ritmo**: las tablaturas pueden llevar duraciones (`6:2`, `-7:1.5`, `7:1/2`) y `tempo:`/`compas:`;
+  *Escuchar* sigue el ritmo real, con metrónomo y cuenta de entrada opcionales.
+- **Tocar con micrófono**: tú tocas y la tablatura (o la partitura de violín) avanza cuando oye la nota correcta.
+- **Metrónomo**: marcar el tempo con toques, compases, subdivisiones, entrenador de velocidad y compases mudos.
 - **Afinador** con tres modos:
   - *Cromático*: cualquier instrumento o la voz (≈50 Hz–3 kHz), La4 de referencia ajustable,
     transposición para instrumentos en Si♭/Mi♭/Fa y notas de referencia (cortas o sostenidas).
@@ -41,7 +44,8 @@ Partituras/
 │   ├── _Plantillas/             Piano_en_blanco.mscz / .musicxml (2 pautas: sol + fa)
 │   └── NoviembreSinTi/
 ├── Violin/
-│   └── _Plantillas/             Violin_en_blanco.mscz / .musicxml (1 pauta, clave de sol)
+│   ├── _Plantillas/             Violin_en_blanco.mscz / .musicxml (1 pauta, clave de sol)
+│   └── 01_CuerdasAlAire … 06_HimnoALaAlegria   6 piezas para empezar (con dedos y nombres de notas)
 └── Armonica/
     ├── _Plantillas/             Tablatura_en_blanco.tab + tab2pdf.py (tablaturas → PDF)
     ├── Flaca/
@@ -82,5 +86,8 @@ que la web lo muestre:
 ```
 mscore -o <Instrumento>/<Cancion>/03_exportados/musicxml/<Cancion>.musicxml <Instrumento>/<Cancion>/02_editable/<Cancion>.mscz
 ```
+
+En `01_referencias/fuente.txt` pon de dónde sale la pieza (primera línea) y, si quieres, una línea
+`nivel: 1` (1 a 5) para que la biblioteca muestre su dificultad.
 
 Si la misma canción existe para varios instrumentos, usa el mismo nombre de carpeta en cada uno.

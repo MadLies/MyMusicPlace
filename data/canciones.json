@@ -1,5 +1,5 @@
 {
-  "generado": "2026-11-07T12:01:08+00:00",
+  "generado": "2026-11-07T12:55:08+00:00",
   "canciones": [
     {
       "id": "armonica/Flaca",
@@ -204,9 +204,106 @@
       "mscz": "Piano/NoviembreSinTi/02_editable/NoviembreSinTi.mscz",
       "notas": "Piano/NoviembreSinTi/Analisis_y_plan.md",
       "fuente": "Arreglo para piano hecho por madlies en MuseScore (ver Analisis_y_plan.md)",
+      "stats": null,
       "extras": [
         "Piano/NoviembreSinTi/03_exportados/pdf/Analisis_y_plan.pdf"
       ]
+    },
+    {
+      "id": "violin/01_CuerdasAlAire",
+      "instrumento": "violin",
+      "carpeta": "01_CuerdasAlAire",
+      "titulo": "Paseo por las cuerdas al aire",
+      "subtitulo": "Ejercicio",
+      "musicxml": "Violin/01_CuerdasAlAire/03_exportados/musicxml/01_CuerdasAlAire.musicxml",
+      "pdf": "Violin/01_CuerdasAlAire/03_exportados/pdf/01_CuerdasAlAire.pdf",
+      "mscz": "Violin/01_CuerdasAlAire/02_editable/01_CuerdasAlAire.mscz",
+      "notas": "Violin/01_CuerdasAlAire/Como_estudiarla.md",
+      "fuente": "Ejercicio original del atril, escrito por madlies para empezar con el violín",
+      "stats": {
+        "nivel": 1
+      },
+      "extras": []
+    },
+    {
+      "id": "violin/02_MaryTeniaUnCorderito",
+      "instrumento": "violin",
+      "carpeta": "02_MaryTeniaUnCorderito",
+      "titulo": "Mary tenía un corderito",
+      "subtitulo": "Tradicional (EE. UU., s. XIX)",
+      "musicxml": "Violin/02_MaryTeniaUnCorderito/03_exportados/musicxml/02_MaryTeniaUnCorderito.musicxml",
+      "pdf": "Violin/02_MaryTeniaUnCorderito/03_exportados/pdf/02_MaryTeniaUnCorderito.pdf",
+      "mscz": "Violin/02_MaryTeniaUnCorderito/02_editable/02_MaryTeniaUnCorderito.mscz",
+      "notas": "Violin/02_MaryTeniaUnCorderito/Como_estudiarla.md",
+      "fuente": "Melodía de dominio público; versión para violín principiante (1ª posición, con dedos y nombres de notas) preparada por madlies",
+      "stats": {
+        "nivel": 1
+      },
+      "extras": []
+    },
+    {
+      "id": "violin/03_Estrellita",
+      "instrumento": "violin",
+      "carpeta": "03_Estrellita",
+      "titulo": "Estrellita, ¿dónde estás?",
+      "subtitulo": "Tradicional francesa («Ah! vous dirai-je, maman»)",
+      "musicxml": "Violin/03_Estrellita/03_exportados/musicxml/03_Estrellita.musicxml",
+      "pdf": "Violin/03_Estrellita/03_exportados/pdf/03_Estrellita.pdf",
+      "mscz": "Violin/03_Estrellita/02_editable/03_Estrellita.mscz",
+      "notas": "Violin/03_Estrellita/Como_estudiarla.md",
+      "fuente": "Melodía de dominio público; versión para violín principiante (1ª posición, con dedos y nombres de notas) preparada por madlies",
+      "stats": {
+        "nivel": 1
+      },
+      "extras": []
+    },
+    {
+      "id": "violin/04_Martinillo",
+      "instrumento": "violin",
+      "carpeta": "04_Martinillo",
+      "titulo": "Martinillo",
+      "subtitulo": "Tradicional francesa («Frère Jacques»)",
+      "musicxml": "Violin/04_Martinillo/03_exportados/musicxml/04_Martinillo.musicxml",
+      "pdf": "Violin/04_Martinillo/03_exportados/pdf/04_Martinillo.pdf",
+      "mscz": "Violin/04_Martinillo/02_editable/04_Martinillo.mscz",
+      "notas": "Violin/04_Martinillo/Como_estudiarla.md",
+      "fuente": "Melodía de dominio público; versión para violín principiante (1ª posición, con dedos y nombres de notas) preparada por madlies",
+      "stats": {
+        "nivel": 2
+      },
+      "extras": []
+    },
+    {
+      "id": "violin/05_LightlyRow",
+      "instrumento": "violin",
+      "carpeta": "05_LightlyRow",
+      "titulo": "Lightly Row (Remando suave)",
+      "subtitulo": "Tradicional alemana («Hänschen klein»)",
+      "musicxml": "Violin/05_LightlyRow/03_exportados/musicxml/05_LightlyRow.musicxml",
+      "pdf": "Violin/05_LightlyRow/03_exportados/pdf/05_LightlyRow.pdf",
+      "mscz": "Violin/05_LightlyRow/02_editable/05_LightlyRow.mscz",
+      "notas": "Violin/05_LightlyRow/Como_estudiarla.md",
+      "fuente": "Melodía de dominio público; versión para violín principiante (1ª posición, con dedos y nombres de notas) preparada por madlies",
+      "stats": {
+        "nivel": 2
+      },
+      "extras": []
+    },
+    {
+      "id": "violin/06_HimnoALaAlegria",
+      "instrumento": "violin",
+      "carpeta": "06_HimnoALaAlegria",
+      "titulo": "Himno a la alegría",
+      "subtitulo": "Ludwig van Beethoven (9ª sinfonía)",
+      "musicxml": "Violin/06_HimnoALaAlegria/03_exportados/musicxml/06_HimnoALaAlegria.musicxml",
+      "pdf": "Violin/06_HimnoALaAlegria/03_exportados/pdf/06_HimnoALaAlegria.pdf",
+      "mscz": "Violin/06_HimnoALaAlegria/02_editable/06_HimnoALaAlegria.mscz",
+      "notas": "Violin/06_HimnoALaAlegria/Como_estudiarla.md",
+      "fuente": "Melodía de Ludwig van Beethoven (1824, dominio público); versión para violín principiante preparada por madlies",
+      "stats": {
+        "nivel": 2
+      },
+      "extras": []
     }
   ]
 }

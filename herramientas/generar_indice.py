@@ -36,14 +36,20 @@ def primero(carpeta, patron):
 
 
 def leer_fuente(carpeta):
-    """Primera línea de 01_referencias/fuente.txt (si existe)."""
+    """(fuente, nivel) desde 01_referencias/fuente.txt: la primera línea es la fuente y una
+    línea opcional «nivel: N» (1-5) indica la dificultad."""
     f = carpeta / "01_referencias" / "fuente.txt"
     if not f.is_file():
-        return ""
+        return "", None
+    fuente, nivel = "", None
     for linea in f.read_text(encoding="utf-8").splitlines():
-        if linea.strip():
-            return linea.strip()
-    return ""
+        linea = linea.strip()
+        m = re.fullmatch(r"nivel\s*:\s*([1-5])", linea, re.I)
+        if m:
+            nivel = int(m.group(1))
+        elif linea and not fuente:
+            fuente = linea
+    return fuente, nivel
 
 
 def titulo_desde_carpeta(nombre):
@@ -57,9 +63,10 @@ def estadisticas(secciones):
             if tipo != "tab":
                 continue
             for tok in valor:
-                if tok in ("_", "|"):
+                base, _dur = tab2pdf.separar_duracion(tok)
+                if base in ("_", "|"):
                     continue
-                for n in tab2pdf.NOTA_RE.findall(tok):
+                for n in tab2pdf.NOTA_RE.findall(base):
                     m = re.fullmatch(r"(-?)(10|[1-9])(['/]*)", n)
                     notas.append((m.group(1) == "-", int(m.group(2)), len(m.group(3))))
     if not notas:
@@ -124,6 +131,7 @@ def cancion_partitura(carpeta, instrumento):
             compositor = m.group(1).strip()
     if not (xml or principal):
         return None
+    fuente, nivel = leer_fuente(carpeta)
     return {
         "id": f"{instrumento}/{carpeta.name}",
         "instrumento": instrumento,
@@ -134,7 +142,8 @@ def cancion_partitura(carpeta, instrumento):
         "pdf": rel(principal) if principal else None,
         "mscz": primero(carpeta / "02_editable", "*.mscz"),
         "notas": primero(carpeta, "*.md"),
-        "fuente": leer_fuente(carpeta),
+        "fuente": fuente,
+        "stats": {"nivel": nivel} if nivel else None,
         "extras": [rel(p) for p in pdfs if p != principal],
     }
 

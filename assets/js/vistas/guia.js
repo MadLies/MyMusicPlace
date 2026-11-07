@@ -22,6 +22,7 @@ export async function mostrar(main) {
         ${leyendaHTML(tono)}
         <ul>
           <li><b>Notas unidas</b> por una línea debajo (<code>-2-2</code>, <code>44</code>, <code>456</code>) van rápidas: se reparten un pulso.</li>
+          <li><b>Ritmo</b>: una nota sola dura un pulso. Si lleva <b>cola</b> dura más (<code>6:2</code> = 2 pulsos, <code>6:4</code> = 4) y si tiene una fracción en la esquina dura menos (<code>7:1/2</code> = medio pulso). <code>-7:1.5</code> es una negra con puntillo.</li>
           <li><b>Bend</b> (<code>-4'</code>, borde punteado): aspiras el hoyo y bajas el tono medio paso cambiando la forma de la boca. Algunas tablaturas lo escriben <code>4b</code> o <code>-4/</code>.</li>
           <li>La <b>nota pequeña</b> debajo de cada número es lo que suena. Cambia según el tono de tu armónica, los números no.</li>
           <li>Muchas tablaturas de internet usan <code>(4)</code> para aspirar y <code>4</code> o <code>+4</code> para soplar. El <a href="#/editor">editor</a> las convierte solo.</li>
@@ -67,10 +68,13 @@ tonalidad: La menor (Am)
 
 &gt; Un comentario que se ve en la página.
 
+tempo: 120
+compas: 4
+
 [Parte A | se toca 2 veces]
 8 -77 -8 7-7 | -6 -67 8 -87
--7 7 -8 8 | 7 -6 -6 _</pre>
-        <p><code>|</code> separa compases, <code>_</code> es una pausa, <code>#</code> al principio de una línea es un comentario que no se muestra. Prueba en el <a href="#/editor">editor</a>: ves el resultado mientras escribes.</p>
+-7:1.5 7:1/2 -8 8 | 7 -6 -6 _</pre>
+        <p><code>|</code> separa compases, <code>_</code> es una pausa (<code>_:2</code> dura dos pulsos), <code>:2</code> o <code>:1/2</code> al final de una nota cambia su duración, y <code>#</code> al principio de una línea es un comentario que no se muestra. El ritmo es opcional: sin él, cada nota dura un pulso. Prueba en el <a href="#/editor">editor</a>: ves el resultado mientras escribes.</p>
       </section>
     </article>`;
 

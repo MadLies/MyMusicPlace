@@ -49,10 +49,14 @@ export async function mostrar(main) {
             <tr><td><code>-4'</code> <code>-3''</code></td><td>bend de medio tono / de un tono (también vale <code>/</code>)</td></tr>
             <tr><td><code>44</code> <code>-2-2</code> <code>456</code></td><td>notas rápidas (juntas, sin espacio)</td></tr>
             <tr><td><code>_</code> &nbsp; <code>|</code></td><td>pausa · barra de compás</td></tr>
+            <tr><td><code>6:2</code> <code>6:4</code></td><td>nota de 2 pulsos (blanca) · de 4 (redonda)</td></tr>
+            <tr><td><code>6:1.5</code> <code>6:1/2</code></td><td>negra con puntillo · corchea suelta</td></tr>
+            <tr><td><code>_:2</code> &nbsp; <code>-77:2</code></td><td>pausa de 2 pulsos · dos notas que se reparten 2 pulsos</td></tr>
             <tr><td><code>[Parte A | detalle]</code></td><td>empieza una sección</td></tr>
             <tr><td><code>&gt; texto</code></td><td>un comentario visible</td></tr>
             <tr><td><code># texto</code></td><td>una nota oculta</td></tr>
-            <tr><td><code>titulo:</code> <code>subtitulo:</code> <code>armonica:</code> <code>tonalidad:</code></td><td>cabecera (antes de la primera sección)</td></tr>
+            <tr><td><code>titulo:</code> <code>subtitulo:</code> <code>armonica:</code> <code>tonalidad:</code> <code>fuente:</code></td><td>cabecera (antes de la primera sección)</td></tr>
+            <tr><td><code>tempo: 100</code> <code>compas: 3</code></td><td>tempo original y pulsos por compás (opcionales)</td></tr>
           </table>
         </details>
       </div>

@@ -38,7 +38,31 @@ TONOS = {"C": 0, "C#": 1, "DB": 1, "D": 2, "D#": 3, "EB": 3, "E": 4, "F": 5, "F#
 # Afinación Richter (armónica diatónica de 10 hoyos): semitonos sobre la tónica
 SOPLA = {1: 0, 2: 4, 3: 7, 4: 12, 5: 16, 6: 19, 7: 24, 8: 28, 9: 31, 10: 36}
 ASPIRA = {1: 2, 2: 7, 3: 11, 4: 14, 5: 17, 6: 21, 7: 23, 8: 26, 9: 29, 10: 33}
-CLAVES = {"titulo", "subtitulo", "armonica", "tonalidad", "forma", "frases", "autor", "fuente"}
+CLAVES = {"titulo", "subtitulo", "armonica", "tonalidad", "forma", "frases", "autor", "fuente", "tempo", "compas"}
+# Duración opcional al final de un token: 8:2  -7:1.5  7:1/2  _:2
+DUR_RE = re.compile(r"(.*?)(?::(\d+(?:[.,]\d+)?(?:/\d+)?))?")
+FRACCIONES = {0.5: "½", 0.25: "¼", 0.75: "¾", 0.125: "⅛"}
+
+
+def separar_duracion(tok):
+    """'8:2' → ('8', 2.0);  '8' → ('8', None).  Lanza ValueError si la duración no vale."""
+    m = DUR_RE.fullmatch(tok)
+    base, dur = m.group(1), m.group(2)
+    if dur is None:
+        return base, None
+    a, _, b = dur.replace(",", ".").partition("/")
+    valor = float(a) / float(b) if b else float(a)
+    if not 0 < valor <= 32:
+        raise ValueError(dur)
+    return base, valor
+
+
+def texto_duracion(d):
+    if d in FRACCIONES:
+        return FRACCIONES[d]
+    if abs(d - 1 / 3) < 0.01:
+        return "⅓"
+    return f"{d:g}"
 NOTA_RE = re.compile(r"-?(?:10|[1-9])['/]*")
 
 
@@ -67,16 +91,20 @@ def leer(path):
                 raise ErrorTab(f"línea {num}: tablatura antes de la primera sección [..]")
             tokens = linea.split()
             for tok in tokens:
-                if tok in ("_", "|"):
+                try:
+                    base, _dur = separar_duracion(tok)
+                except (ValueError, ZeroDivisionError):
+                    raise ErrorTab(f"línea {num}: duración inválida en «{tok}» (usa :2, :1.5 o :1/2)")
+                if base in ("_", "|"):
                     continue
-                if "".join(NOTA_RE.findall(tok)) != tok:
+                if not base or "".join(NOTA_RE.findall(base)) != base:
                     raise ErrorTab(f"línea {num}: no entiendo «{tok}» (hoyos del 1 al 10, "
-                                   f"- para aspirar, ' para bend, _ pausa, | barra)")
+                                   f"- para aspirar, ' para bend, _ pausa, | barra, :2 duración)")
             actual["items"].append(("tab", tokens))
     return meta, intro, secciones
 
 
-def chip(nota, tonica):
+def chip(nota, tonica, dur=None):
     m = re.fullmatch(r"(-?)(10|[1-9])(['/]*)", nota)
     aspira, hoyo, bends = m.group(1) == "-", int(m.group(2)), len(m.group(3))
     semi = (ASPIRA if aspira else SOPLA)[hoyo] - bends + tonica
@@ -84,20 +112,26 @@ def chip(nota, tonica):
     if bends:
         clase += " bend"
     texto = ("-" if aspira else "") + str(hoyo) + "ʼ" * bends
-    return f'<span class="n {clase}"><b>{texto}</b><small>{NOMBRES[semi % 12]}</small></span>'
+    corta = f'<i class="dur">{texto_duracion(dur)}</i>' if dur is not None and dur < 1 else ""
+    return f'<span class="n {clase}"><b>{texto}</b><small>{NOMBRES[semi % 12]}</small>{corta}</span>'
 
 
 def linea_html(tokens, tonica):
     out = []
     for tok in tokens:
-        if tok == "_":
-            out.append('<span class="pausa"></span>')
-        elif tok == "|":
+        base, dur = separar_duracion(tok)
+        d = dur if dur is not None else 1
+        if base == "_":
+            out.append(f'<span class="pausa" style="width:{22 * d:.0f}px"></span>')
+        elif base == "|":
             out.append('<span class="barra"></span>')
         else:
-            notas = NOTA_RE.findall(tok)
+            notas = NOTA_RE.findall(base)
             junto = " junto" if len(notas) > 1 else ""
-            out.append(f'<span class="grupo{junto}">' + "".join(chip(n, tonica) for n in notas) + "</span>")
+            cola = f'<span class="cola" style="width:{26 * (d - 1):.0f}px"></span>' if d > 1 else ""
+            out.append(f'<span class="grupo{junto}">'
+                       + "".join(chip(n, tonica, d if len(notas) == 1 else None) for n in notas)
+                       + cola + "</span>")
     return '<div class="linea">' + "".join(out) + "</div>"
 
 
@@ -162,6 +196,11 @@ h2 { font-size: 10pt; text-transform: uppercase; letter-spacing: .06em; color: #
 .aspira { color: #a6261c; background: #fdeeed; border-color: #ec9f98; }
 .bend { border-style: dashed; }
 .pausa { display: inline-block; width: 22px; height: 2px; margin-bottom: 18px; border-bottom: 2px dotted #8c959f; }
+.cola { display: inline-block; align-self: center; height: 4px; margin-left: -4px; border-radius: 0 3px 3px 0;
+        background: repeating-linear-gradient(90deg, #c4ccd4 0 22px, transparent 22px 26px); }
+.n { position: relative; }
+.n .dur { position: absolute; top: -6px; right: -5px; font-style: normal; font-size: 6.5pt; line-height: 1; padding: 1px 3px;
+          border-radius: 5px; background: #1f2328; color: #fff; font-weight: 700; }
 .barra { display: inline-block; width: 2px; align-self: stretch; background: #57606a; margin: 0 4px; }
 .texto { break-inside: avoid; }
 footer { margin-top: 12px; font-size: 8pt; color: #8c959f; text-align: right; }
@@ -182,6 +221,9 @@ def construir_html(meta, intro, secciones):
     info = [f'<span><b>Armónica:</b> diatónica en {NOMBRES[tonica]} ({e(letra.title())})</span>']
     if meta.get("tonalidad"):
         info.append(f'<span><b>Tonalidad:</b> {e(meta["tonalidad"])}</span>')
+    if meta.get("tempo"):
+        compas = f" · compás de {e(meta['compas'])}" if meta.get("compas") else ""
+        info.append(f'<span><b>Tempo:</b> ♩ = {e(meta["tempo"])}{compas}</span>')
     if meta.get("autor"):
         info.append(f'<span><b>Autor:</b> {e(meta["autor"])}</span>')
     if meta.get("fuente"):
@@ -195,6 +237,7 @@ def construir_html(meta, intro, secciones):
         f'<span>{chip("4", tonica)} soplar</span>'
         f'<span>{chip("-4", tonica)} aspirar</span>'
         f'<span><span class="grupo junto">{chip("-2", tonica)}{chip("-2", tonica)}</span> notas seguidas, rápidas</span>'
+        f'<span><span class="grupo">{chip("6", tonica)}<span class="cola" style="width:26px"></span></span> nota larga (6:2)</span>'
         '<span><span class="pausa" style="margin:0"></span> pausa</span>'
         f'<span>La nota pequeña es lo que suena en una armónica en {NOMBRES[tonica]}</span>'
         "</div>")

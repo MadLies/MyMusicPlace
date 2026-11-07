@@ -15,6 +15,9 @@ export class Reproductor {
     this.metronomo = false;
     this.silencio = false; // modo "guía muda": ilumina sin sonar
     this.unaVez = false; // con rango: tocar la parte una sola vez y parar
+    this.compas = 4; // pulsos por compás (acento del metrónomo)
+    this.cuentaEntrada = false; // un compás de clics antes de empezar
+    this.timersCuenta = [];
   }
 
   get pulso() { return 60 / this.tempo; }
@@ -34,6 +37,13 @@ export class Reproductor {
     this.sonando = true;
     this.alEstado?.(true);
     this.pulsoAcum = 0;
+    if (this.cuentaEntrada) {
+      // Un compás de clics; la música entra justo después.
+      const p = this.pulso;
+      for (let k = 0; k < this.compas; k++) clic(k === 0 ? 2 : 1, k * p);
+      this.timersCuenta.push(setTimeout(() => this._paso(), this.compas * p * 1000));
+      return;
+    }
     this._paso();
   }
 
@@ -42,7 +52,11 @@ export class Reproductor {
     const ev = this.eventos[this.indice];
     if (!ev) { this.detener(); return; }
     if (!this.silencio) this.sonar(this.indice);
-    if (this.metronomo && Number.isInteger(Math.round(this.pulsoAcum * 1000) / 1000)) clic(this.pulsoAcum % 4 === 0);
+    if (this.metronomo) {
+      // Clic en cada pulso entero que cae dentro de este evento (también a mitad de una nota larga).
+      const ini = this.pulsoAcum, fin = ini + ev.dur;
+      for (let b = Math.ceil(ini - 1e-6); b < fin - 1e-6; b++) clic(b % this.compas === 0 ? 2 : 1, (b - ini) * this.pulso);
+    }
     this.alPaso?.(this.indice, ev);
     this.timer = setTimeout(() => {
       this.pulsoAcum += ev.dur;
@@ -59,6 +73,8 @@ export class Reproductor {
   pausar() {
     this.sonando = false;
     clearTimeout(this.timer);
+    this.timersCuenta.forEach(clearTimeout);
+    this.timersCuenta = [];
     this.alEstado?.(false);
   }
 

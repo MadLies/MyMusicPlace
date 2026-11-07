@@ -1,10 +1,12 @@
 // Partitura (piano / violín) desde MusicXML con OpenSheetMusicDisplay: ver, escuchar con cursor y leer el análisis.
 import { cargarIndice } from "../app.js";
 import { tocarNota, contexto } from "../audio.js";
-import { frecuencia, nombreNota, octava, CIFRADO } from "../notas.js";
+import { frecuencia, nombreNota, octava, CIFRADO, midiDeFrecuencia, posicionViolin } from "../notas.js";
+import { Microfono } from "../microfono.js";
+import { clic } from "../audio.js";
 import { esc } from "../render.js";
 import { icono } from "../iconos.js";
-import { progresoDe, actualizar } from "../progreso.js";
+import { progresoDe, actualizar, pref, setPref } from "../progreso.js";
 import { fuenteHTML } from "./fuentes.js";
 
 const OSMD_URL = "https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.8.9/build/opensheetmusicdisplay.min.js";
@@ -25,7 +27,8 @@ export async function mostrar(main, [instrumento, carpeta]) {
   const { canciones } = await cargarIndice();
   const c = canciones.find((x) => x.id === `${instrumento}/${carpeta}`);
   if (!c) throw new Error(`No encontré «${carpeta}».`);
-  const timbre = instrumento === "piano" ? "piano" : "armonica";
+  const timbre = instrumento === "piano" ? "piano" : instrumento === "violin" ? "violin" : "armonica";
+  const esPiano = instrumento === "piano";
   const progreso = progresoDe(c.id);
 
   main.innerHTML = `
@@ -44,7 +47,7 @@ export async function mostrar(main, [instrumento, carpeta]) {
     </header>
     <div class="pestanas" role="tablist">
       ${c.musicxml ? '<button role="tab" type="button" data-p="partitura" aria-selected="true">Partitura</button>' : ""}
-      ${c.notas ? `<button role="tab" type="button" data-p="analisis" aria-selected="${!c.musicxml}">Análisis y plan</button>` : ""}
+      ${c.notas ? `<button role="tab" type="button" data-p="analisis" aria-selected="${!c.musicxml}">${esPiano ? "Análisis y plan" : "Cómo estudiarla"}</button>` : ""}
       ${c.extras?.length ? '<button role="tab" type="button" data-p="archivos" aria-selected="false">Archivos</button>' : ""}
     </div>
     <section data-panel="partitura" ${c.musicxml ? "" : "hidden"}>
@@ -58,16 +61,20 @@ export async function mostrar(main, [instrumento, carpeta]) {
             <input type="range" min="40" max="160" step="2" value="${progreso.tempo || 72}" data-accion="tempo">
             <output>${progreso.tempo || 72}</output>
           </label>
+          ${esPiano ? "" : `<button type="button" class="btn btn-mic" data-accion="mic" aria-pressed="false" title="Toca tú: el cursor avanza cuando el micrófono oye la nota correcta">${icono("mic")}<span>Tocar con micrófono</span></button>`}
           <div class="zoom">
             <button type="button" class="btn-icono" data-accion="zoom-" aria-label="Alejar">${icono("menos")}</button>
             <button type="button" class="btn-icono" data-accion="zoom+" aria-label="Acercar">${icono("mas")}</button>
           </div>
         </div>
         <div class="panel-fila opciones">
-          <label class="interruptor"><input type="checkbox" data-accion="mano-der" checked> Mano derecha</label>
-          <label class="interruptor"><input type="checkbox" data-accion="mano-izq" checked> Mano izquierda</label>
+          ${esPiano ? `<label class="interruptor"><input type="checkbox" data-accion="mano-der" checked> Mano derecha</label>
+          <label class="interruptor"><input type="checkbox" data-accion="mano-izq" checked> Mano izquierda</label>` : ""}
+          <label class="interruptor"><input type="checkbox" data-accion="metro"> Metrónomo</label>
+          <label class="interruptor" title="Un compás de clics antes de empezar"><input type="checkbox" data-accion="cuenta" ${pref("cuentaEntrada", false) ? "checked" : ""}> Cuenta de entrada</label>
         </div>
-        <p class="nota-texto">Pasa el mouse sobre una nota para ver cuál es; haz clic en ella para oírla. Haz clic en un espacio vacío de un compás para empezar a escuchar desde ahí. La reproducción lee la partitura de corrido (sin hacer las repeticiones) para que sigas el cursor fácilmente.</p>
+        <div class="estado-mic" hidden></div>
+        <p class="nota-texto">Pasa el mouse sobre una nota para ver cuál es; haz clic en ella para oírla. Haz clic en un espacio vacío de un compás para empezar desde ahí.${esPiano ? " La reproducción lee la partitura de corrido (sin hacer las repeticiones) para que sigas el cursor fácilmente." : " Con «Tocar con micrófono», la partitura espera a que toques cada nota."}</p>
       </div>
       <div class="partitura" id="osmd"><p class="cargando">Cargando partitura…</p></div>
       <div class="globo-nota" role="tooltip" hidden></div>
@@ -103,7 +110,8 @@ export async function mostrar(main, [instrumento, carpeta]) {
 
   if (!c.musicxml) return;
 
-  let osmd = null, eventos = [], timer = null, sonando = false, pos = 0, tempo = progreso.tempo || 72;
+  let osmd = null, eventos = [], timer = null, sonando = false, pos = 0, tempo = progreso.tempo || 72, pulsosCompas = 4;
+  let metronomo = false, cuentaEntrada = pref("cuentaEntrada", false), timersCuenta = [];
   const manos = { 0: true, 1: true };
 
   try {
@@ -113,11 +121,20 @@ export async function mostrar(main, [instrumento, carpeta]) {
       autoResize: true, backend: "svg", drawTitle: false, followCursor: true,
       cursorsOptions: [{ type: 0, color: "#2f6f5e", alpha: 0.45, follow: true }],
     });
+    // Números de compás solo al inicio de cada línea: así no se confunden con los números de dedo.
+    if ("RenderMeasureNumbersOnlyAtSystemStart" in osmd.EngravingRules) osmd.EngravingRules.RenderMeasureNumbersOnlyAtSystemStart = true;
     await osmd.load(c.musicxml);
     osmd.zoom = innerWidth < 700 ? 0.6 : 0.85;
     osmd.render();
     osmd.cursor.show();
     eventos = construirEventos(osmd);
+    const tempoXML = Math.round(osmd.Sheet?.DefaultStartTempoInBpm || 0);
+    if (!progreso.tempo && tempoXML >= 40 && tempoXML <= 160) {
+      tempo = tempoXML;
+      $('[data-accion="tempo"]').value = tempo;
+      $('[data-accion="tempo"]').nextElementSibling.textContent = tempo;
+    }
+    pulsosCompas = osmd.Sheet?.SourceMeasures?.[0]?.ActiveTimeSignature?.Numerator || 4;
   } catch (err) {
     $("#osmd").innerHTML = `<p class="aviso">No pude mostrar la partitura: ${esc(err.message)}</p>`;
     return;
@@ -221,6 +238,11 @@ export async function mostrar(main, [instrumento, carpeta]) {
     for (const n of ev.notas) if (manos[n.pentagrama] !== false) tocarNota(frecuencia(n.midi), n.dur * redonda(), { timbre });
     const sig = eventos[pos + 1];
     const espera = sig ? (sig.t - ev.t) * redonda() : 0.8;
+    if (metronomo) {
+      // Clic en cada pulso (negra) que empieza dentro de este evento; acento al inicio del compás.
+      const ini = ev.t * 4, fin = sig ? sig.t * 4 : ini + 1;
+      for (let b = Math.ceil(ini - 1e-6); b < fin - 1e-6; b++) clic(b % pulsosCompas === 0 ? 2 : 1, ((b - ini) / 4) * redonda());
+    }
     timer = setTimeout(() => {
       pos++;
       if (pos < eventos.length) osmd.cursor.next();
@@ -230,19 +252,89 @@ export async function mostrar(main, [instrumento, carpeta]) {
 
   function reproducir() {
     contexto();
+    if (mic?.activo) alternarMic();
     if (pos >= eventos.length) irA(0);
     sonando = true;
     pintarPlay();
+    if (cuentaEntrada) {
+      const p = 60 / tempo;
+      for (let k = 0; k < pulsosCompas; k++) clic(k === 0 ? 2 : 1, k * p);
+      timersCuenta.push(setTimeout(paso, pulsosCompas * p * 1000));
+      return;
+    }
     paso();
   }
-  function pausar() { sonando = false; clearTimeout(timer); pintarPlay(); }
+  function pausar() { sonando = false; clearTimeout(timer); timersCuenta.forEach(clearTimeout); timersCuenta = []; pintarPlay(); }
+
+  // ---------- Tocar con micrófono: el cursor espera a que suene la nota correcta ----------
+  let mic = null, objetivo = null, estable = 0, esperarSoltar = false, pico = 0, aciertos = 0;
+  const estadoMic = $(".estado-mic");
+  const conNotas = (i) => { while (i < eventos.length && !eventos[i].notas.length) i++; return i < eventos.length ? i : null; };
+  const notaMeta = (i) => Math.max(...eventos[i].notas.map((n) => n.midi));
+  const describir = (m) => {
+    const pv = instrumento === "violin" ? posicionViolin(m) : null;
+    return `<b>${nombreNota(m)}${octava(m)}</b>${pv ? ` (${pv.texto})` : ""}`;
+  };
+  function fijarObjetivo(i) {
+    objetivo = i;
+    if (i === null) {
+      estadoMic.innerHTML = `${icono("check")} ¡Terminaste la pieza! Aciertos: ${aciertos}. <button type="button" class="btn-mini" data-accion="mic-otra">Otra vez</button>`;
+      return;
+    }
+    irA(i);
+    estadoMic.innerHTML = `${icono("mic")} Toca ${describir(notaMeta(i))} · aciertos: ${aciertos}`;
+  }
+  function alOir({ frec, rms }) {
+    if (objetivo === null) return;
+    const meta = notaMeta(objetivo);
+    if (!frec) { esperarSoltar = false; estable = 0; return; }
+    const m = midiDeFrecuencia(frec);
+    const r = Math.round(m);
+    const cents = Math.round((m - meta) * 100);
+    const coincide = r === meta;
+    estadoMic.innerHTML = `${icono("mic")} Toca ${describir(meta)} · oigo <b class="${coincide ? "ok" : "mal"}">${nombreNota(r)}${octava(r)}</b>${coincide ? ` <small>${cents > 0 ? "+" : ""}${cents}¢</small>` : ""} · aciertos: ${aciertos}`;
+    if (esperarSoltar) { if (!coincide || rms < pico * 0.45) esperarSoltar = false; return; }
+    pico = Math.max(pico * 0.97, rms);
+    estable = coincide && Math.abs(cents) < 40 ? estable + 1 : 0;
+    if (estable >= 3) {
+      aciertos++;
+      estable = 0;
+      esperarSoltar = true;
+      pico = rms;
+      fijarObjetivo(conNotas(objetivo + 1));
+    }
+  }
+  async function alternarMic() {
+    const b = $('[data-accion="mic"]');
+    if (!b) return;
+    if (mic?.activo) {
+      mic.detener(); mic = null; objetivo = null;
+      b.setAttribute("aria-pressed", "false");
+      estadoMic.hidden = true;
+      return;
+    }
+    pausar();
+    mic = new Microfono(alOir);
+    try { await mic.iniciar(); } catch (err) {
+      estadoMic.hidden = false;
+      estadoMic.textContent = `No pude usar el micrófono: ${err.message}`;
+      mic = null;
+      return;
+    }
+    b.setAttribute("aria-pressed", "true");
+    estadoMic.hidden = false;
+    aciertos = 0;
+    fijarObjetivo(conNotas(pos >= eventos.length ? 0 : pos));
+  }
   function detener() { pausar(); irA(0); }
 
   main.addEventListener("click", (e) => {
     const b = e.target.closest("[data-accion]");
     if (b && b.tagName === "BUTTON") {
       if (b.dataset.accion === "play") sonando ? pausar() : reproducir();
-      if (b.dataset.accion === "stop") detener();
+      if (b.dataset.accion === "stop") { detener(); if (mic?.activo) alternarMic(); }
+      if (b.dataset.accion === "mic") alternarMic();
+      if (b.dataset.accion === "mic-otra") { aciertos = 0; fijarObjetivo(conNotas(0)); }
       if (b.dataset.accion === "zoom+" || b.dataset.accion === "zoom-") {
         osmd.zoom = Math.max(0.4, Math.min(1.6, osmd.zoom + (b.dataset.accion === "zoom+" ? 0.1 : -0.1)));
         osmd.render();
@@ -264,13 +356,18 @@ export async function mostrar(main, [instrumento, carpeta]) {
       const num = Number((id.match(/\d+/) || [])[0]);
       if (num) {
         const i = eventos.findIndex((ev) => ev.compas + 1 >= num);
-        if (i >= 0) { const s = sonando; pausar(); irA(i); if (s) reproducir(); }
+        if (i >= 0) {
+          if (mic?.activo) { fijarObjetivo(conNotas(i)); return; }
+          const s = sonando; pausar(); irA(i); if (s) reproducir();
+        }
       }
     }
   });
   main.addEventListener("change", (e) => {
     if (e.target.dataset.accion === "mano-der") manos[0] = e.target.checked;
     if (e.target.dataset.accion === "mano-izq") manos[1] = e.target.checked;
+    if (e.target.dataset.accion === "metro") metronomo = e.target.checked;
+    if (e.target.dataset.accion === "cuenta") { cuentaEntrada = e.target.checked; setPref("cuentaEntrada", cuentaEntrada); }
   });
   const tempoEl = $('[data-accion="tempo"]');
   tempoEl.addEventListener("input", () => { tempo = Number(tempoEl.value); tempoEl.nextElementSibling.textContent = tempo; });
@@ -278,6 +375,7 @@ export async function mostrar(main, [instrumento, carpeta]) {
 
   return () => {
     pausar();
+    mic?.detener();
     removeEventListener("scroll", ocultarGlobo);
   };
 }

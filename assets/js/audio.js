@@ -29,7 +29,7 @@ export function setVolumen(v) {
   salida.gain.value = v;
 }
 
-/** Toca una nota. timbre: "armonica" | "piano". */
+/** Toca una nota. timbre: "armonica" | "piano" | "violin". */
 export function tocarNota(frec, duracion = 0.45, { cuando = 0, timbre = "armonica", volumen = 0.25 } = {}) {
   const c = contexto();
   const t0 = c.currentTime + cuando;
@@ -54,6 +54,25 @@ export function tocarNota(frec, duracion = 0.45, { cuando = 0, timbre = "armonic
     return;
   }
 
+  if (timbre === "violin") {
+    // Cuerda frotada: diente de sierra filtrado, ataque suave y vibrato que entra tarde.
+    osc.type = "sawtooth";
+    filtro.frequency.value = Math.min(4500, frec * 5);
+    filtro.Q.value = 1.2;
+    const lfo = c.createOscillator(), prof = c.createGain();
+    lfo.frequency.value = 5.5;
+    prof.gain.setValueAtTime(0, t0);
+    prof.gain.linearRampToValueAtTime(frec * 0.004, t0 + Math.min(0.35, duracion));
+    lfo.connect(prof).connect(osc.frequency);
+    const sost = Math.max(0.08, duracion - 0.06);
+    g.gain.linearRampToValueAtTime(volumen * 0.8, t0 + 0.07);
+    g.gain.setValueAtTime(volumen * 0.8, t0 + sost);
+    g.gain.linearRampToValueAtTime(0, t0 + sost + 0.09);
+    osc.start(t0); lfo.start(t0);
+    osc.stop(t0 + sost + 0.12); lfo.stop(t0 + sost + 0.12);
+    return;
+  }
+
   osc.setPeriodicWave(onda());
   filtro.frequency.value = Math.min(5000, frec * 6);
   const lfo = c.createOscillator(), prof = c.createGain();
@@ -70,16 +89,31 @@ export function tocarNota(frec, duracion = 0.45, { cuando = 0, timbre = "armonic
   lfo.stop(t0 + sostener + 0.1);
 }
 
-/** Un "clic" corto para el metrónomo. */
-export function clic(fuerte = false) {
+/**
+ * Un "clic" de metrónomo. nivel: 2 = acento (1er pulso), 1 = pulso, 0 = subdivisión
+ * (también acepta true/false). cuando: segundos desde ahora (programado con el reloj de audio).
+ */
+export function clic(nivel = 1, cuando = 0, volumen = 1) {
+  if (nivel === true) nivel = 2;
+  if (nivel === false) nivel = 1;
   const c = contexto();
+  const t = c.currentTime + Math.max(0, cuando);
   const osc = c.createOscillator(), g = c.createGain();
-  osc.frequency.value = fuerte ? 1600 : 1100;
-  g.gain.setValueAtTime(0.2, c.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.05);
+  osc.type = nivel === 0 ? "triangle" : "square";
+  osc.frequency.value = nivel === 2 ? 1760 : nivel === 1 ? 1175 : 880;
+  const pico = (nivel === 2 ? 0.32 : nivel === 1 ? 0.22 : 0.1) * volumen;
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, pico), t + 0.002);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + (nivel === 0 ? 0.03 : 0.05));
   osc.connect(g).connect(salida);
-  osc.start();
-  osc.stop(c.currentTime + 0.06);
+  osc.start(t);
+  osc.stop(t + 0.07);
+}
+
+/** Clic programado a una hora exacta del reloj de audio (para el metrónomo). */
+export function clicEn(tiempoAudio, nivel = 1, volumen = 1) {
+  const c = contexto();
+  clic(nivel, tiempoAudio - c.currentTime, volumen);
 }
 
 /**

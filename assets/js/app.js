@@ -21,6 +21,7 @@ const rutas = [
   { re: /^\/(piano|violin)\/([^/]+)$/, vista: () => import("./vistas/partitura.js"), nav: "inicio" },
   { re: /^\/guia$/, vista: () => import("./vistas/guia.js"), nav: "guia" },
   { re: /^\/afinador(?:\/(cromatico|armonica|violin))?$/, vista: () => import("./vistas/afinador.js"), nav: "afinador" },
+  { re: /^\/metronomo$/, vista: () => import("./vistas/metronomo.js"), nav: "metronomo" },
   { re: /^\/editor$/, vista: () => import("./vistas/editor.js"), nav: "editor" },
   { re: /^\/fuentes$/, vista: () => import("./vistas/fuentes.js"), nav: "fuentes" },
 ];

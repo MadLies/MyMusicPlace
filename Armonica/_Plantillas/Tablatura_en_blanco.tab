@@ -11,6 +11,8 @@
 #     44     dos notas seguidas/rápidas (sin espacio)  -2-2  456 ...
 #     -3'    bend (bajar medio tono), también vale -3/     -3''   bend de un tono
 #     _      pausa / espacio            |      barra de compás
+#     6:2    nota de 2 pulsos (6:4 = 4, 6:1.5 = negra con puntillo, 6:1/2 = corchea)
+#     _:2    pausa de 2 pulsos          tempo: / compas:  en la cabecera (opcionales)
 #     > ...  un párrafo de texto        [Título | detalle | acorde]  nueva sección
 # ─────────────────────────────────────────────────────────────
 
@@ -19,6 +21,8 @@ subtitulo: Artista · estilo
 armonica: C
 tonalidad: Do (C) · 1ª posición
 fuente: Tablatura recopilada y adaptada por madlies (o el enlace de donde la sacaste)
+tempo: 90
+compas: 4
 # forma: (opcional) un acorde por compás, | separa filas
 # forma: C C C C | F F C C | G F C G
 # frases: 1 1 1 1 | 2 2 3 3 | 4 4 5 5
