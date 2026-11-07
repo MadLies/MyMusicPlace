@@ -13,6 +13,9 @@ Partituras de piano y violín y tablaturas de armónica, organizadas por instrum
   *Escuchar* sigue el ritmo real, con metrónomo y cuenta de entrada opcionales.
 - **Tocar con micrófono**: tú tocas y la tablatura (o la partitura de violín) avanza cuando oye la nota correcta.
 - **Metrónomo**: marcar el tempo con toques, compases, subdivisiones, entrenador de velocidad y compases mudos.
+- **Notas en los instrumentos**: mapa de la armónica (con todos los bends, según su tono) y diapasón
+  del violín con el dedo de cada posición; resalta escalas, y con el micrófono se enciende el círculo
+  de la nota que suena, en verde, amarillo o rojo según su afinación.
 - **Afinador** con tres modos:
   - *Cromático*: cualquier instrumento o la voz (≈50 Hz–3 kHz), La4 de referencia ajustable,
     transposición para instrumentos en Si♭/Mi♭/Fa y notas de referencia (cortas o sostenidas).
