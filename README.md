@@ -16,6 +16,13 @@ Partituras de piano y violín y tablaturas de armónica, organizadas por instrum
 - **Notas en los instrumentos**: mapa de la armónica (con todos los bends, según su tono) y diapasón
   del violín con el dedo de cada posición; resalta escalas, y con el micrófono se enciende el círculo
   de la nota que suena, en verde, amarillo o rojo según su afinación.
+- **Teoría**:
+  - *Escalas*: las 12 tonalidades en el teclado del piano (mayor, las tres menores, los 7 modos griegos,
+    pentatónicas y blues), bien escritas (Fa♯ en Re mayor, no Sol♭), con fórmula, grados, armadura,
+    relativa, nota característica de cada modo y la galería de las 12.
+  - *Armonía*: los acordes de cada tonalidad (tríadas o con 7ª) con su número romano y su función
+    (tónica, subdominante, dominante), progresiones típicas para escuchar, dominantes secundarias
+    (V7/ii, V7/V…), préstamo modal, napolitano, sustituto tritonal y el círculo de quintas.
 - **Afinador** con tres modos:
   - *Cromático*: cualquier instrumento o la voz (≈50 Hz–3 kHz), La4 de referencia ajustable,
     transposición para instrumentos en Si♭/Mi♭/Fa y notas de referencia (cortas o sostenidas).

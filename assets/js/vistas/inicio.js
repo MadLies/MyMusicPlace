@@ -67,6 +67,7 @@ export async function mostrar(main) {
       <a href="#/guia"><strong>¿Primera vez con la armónica?</strong><span>Cómo leer tablaturas, el mapa de notas y las posiciones.</span></a>
       <a href="#/afinador"><strong>Afinador</strong><span>Cromático para cualquier instrumento, bends de armónica y entonación de violín.</span></a>
       <a href="#/notas"><strong>Notas en los instrumentos</strong><span>Mapa de la armónica y diapasón del violín: qué nota y qué dedo.</span></a>
+      <a href="#/teoria"><strong>Teoría: escalas y armonía</strong><span>Las escalas y modos en el piano, los acordes de cada tonalidad y sus funciones.</span></a>
       <a href="#/editor"><strong>Añadir una tablatura</strong><span>Pega una tablatura en cualquier notación y conviértela.</span></a>
     </section>`;
 
