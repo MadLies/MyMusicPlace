@@ -10,7 +10,12 @@ Partituras de piano y violín y tablaturas de armónica, organizadas por instrum
   nota con tempo ajustable; repite una parte en bucle; avanza con las flechas del teclado.
 - **Armónica dibujada**: muestra qué hoyo tocar y si se sopla o se aspira, en el tono de tu armónica.
 - **Tocar con micrófono**: tú tocas y la tablatura avanza cuando oye la nota correcta.
-- **Afinador y bends**: qué nota suena, en qué hoyo está y una gráfica para entrenar bends.
+- **Afinador** con tres modos:
+  - *Cromático*: cualquier instrumento o la voz (≈50 Hz–3 kHz), La4 de referencia ajustable,
+    transposición para instrumentos en Si♭/Mi♭/Fa y notas de referencia (cortas o sostenidas).
+  - *Armónica*: en qué hoyo está la nota y entrenador de bends.
+  - *Violín*: cuerdas al aire, entonación en 1ª posición (escalas con diagrama del diapasón e
+    informe por dedo: cuál queda alto o bajo y cómo corregir la mano), estabilidad del arco y bordón.
 - **Partituras de piano** desde MusicXML, con cursor que sigue la música y el análisis en otra pestaña.
 - **Editor**: pega una tablatura en cualquier notación — `(4)` para aspirar, `+4`, `6b`, con la letra
   encima — y la convierte, la previsualiza y la deja lista para el repo.

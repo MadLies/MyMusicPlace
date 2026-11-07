@@ -81,3 +81,39 @@ export function clic(fuerte = false) {
   osc.start();
   osc.stop(c.currentTime + 0.06);
 }
+
+/**
+ * Nota continua (bordón / nota de referencia sostenida). Devuelve una función para detenerla.
+ * Timbre suave tipo órgano para que no tape al instrumento.
+ */
+export function bordon(frec, volumen = 0.09) {
+  const c = contexto();
+  const t0 = c.currentTime;
+  const g = c.createGain();
+  const filtro = c.createBiquadFilter();
+  filtro.type = "lowpass";
+  filtro.frequency.value = Math.min(4000, frec * 5);
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(volumen, t0 + 0.4);
+  filtro.connect(g).connect(salida);
+  const oscs = [[1, 1], [2, 0.35], [3, 0.15]].map(([mult, amp]) => {
+    const o = c.createOscillator();
+    const ga = c.createGain();
+    o.type = "sine";
+    o.frequency.value = frec * mult;
+    ga.gain.value = amp;
+    o.connect(ga).connect(filtro);
+    o.start(t0);
+    return o;
+  });
+  let parado = false;
+  return () => {
+    if (parado) return;
+    parado = true;
+    const t = c.currentTime;
+    g.gain.cancelScheduledValues(t);
+    g.gain.setValueAtTime(g.gain.value, t);
+    g.gain.linearRampToValueAtTime(0, t + 0.25);
+    oscs.forEach((o) => o.stop(t + 0.3));
+  };
+}

@@ -65,7 +65,7 @@ export async function mostrar(main) {
     </div>
     <section class="atajos">
       <a href="#/guia"><strong>¿Primera vez con la armónica?</strong><span>Cómo leer tablaturas, el mapa de notas y las posiciones.</span></a>
-      <a href="#/afinador"><strong>Afinador y bends</strong><span>Mira qué nota estás tocando y entrena los bends.</span></a>
+      <a href="#/afinador"><strong>Afinador</strong><span>Cromático para cualquier instrumento, bends de armónica y entonación de violín.</span></a>
       <a href="#/editor"><strong>Añadir una tablatura</strong><span>Pega una tablatura en cualquier notación y conviértela.</span></a>
     </section>`;
 
