@@ -65,6 +65,7 @@ export async function mostrar(main, [carpeta]) {
         <label class="interruptor"><input type="checkbox" data-accion="memoria"> Ocultar números (memoria)</label>
         <label class="interruptor"><input type="checkbox" data-accion="metronomo"> Metrónomo</label>
         <label class="interruptor"><input type="checkbox" data-accion="ver-armonica" ${pref("verArmonica", true) ? "checked" : ""}> Ver armónica</label>
+        <label class="interruptor" title="Mientras suena o tocas con el micrófono, baja la página solo cuando la nota sale de la pantalla"><input type="checkbox" data-accion="seguir" ${pref("seguirNota", false) ? "checked" : ""}> Seguir la nota</label>
       </div>
       <div class="estado" aria-live="polite">
         <div class="estado-nota"><span class="estado-num">—</span><span class="estado-txt">Pulsa <b>Escuchar</b>, usa las flechas para ir nota a nota, o toca una nota de la tablatura.</span></div>
@@ -100,6 +101,7 @@ export async function mostrar(main, [carpeta]) {
     },
   });
   rep.tempo = progreso.tempo || 80;
+  let seguir = pref("seguirNota", false);
 
   function marcar(i, ev) {
     activo?.classList.remove("activa");
@@ -115,16 +117,19 @@ export async function mostrar(main, [carpeta]) {
       estadoNum.textContent = "—";
       estadoNum.className = "estado-num";
     }
-    if (activo) asegurarVisible(activo);
+    // La página no se mueve sola, salvo que actives «Seguir la nota» y algo esté sonando.
+    if (activo && seguir && (rep.sonando || mic?.activo)) asegurarVisible(activo);
   }
 
+  // Si la línea de la nota ya se ve, no hace nada; si salió de la pantalla, la pone
+  // justo debajo del panel (como pasar de página), sin recentrar en cada nota.
   function asegurarVisible(el) {
-    const r = el.getBoundingClientRect();
-    const panel = $(".panel").getBoundingClientRect();
-    const arriba = getComputedStyle($(".panel")).position === "sticky" ? panel.bottom + 8 : 8;
-    if (r.top < arriba || r.bottom > innerHeight - 16) {
-      window.scrollBy({ top: r.top - arriba - (innerHeight - arriba) / 3, behavior: "smooth" });
-    }
+    const linea = el.closest(".linea") || el;
+    const r = linea.getBoundingClientRect();
+    const panel = $(".panel");
+    const tope = getComputedStyle(panel).position === "sticky" ? panel.getBoundingClientRect().bottom + 8 : 64;
+    if (r.top >= tope && r.bottom <= innerHeight - 8) return;
+    window.scrollBy({ top: r.top - tope - 8, behavior: "smooth" });
   }
 
   // ---------- Bucles por sección ----------
@@ -290,6 +295,7 @@ export async function mostrar(main, [carpeta]) {
       case "memoria": tabEl.classList.toggle("memoria", t.checked); break;
       case "metronomo": rep.metronomo = t.checked; break;
       case "ver-armonica": $(".armonica-cont").hidden = !t.checked; setPref("verArmonica", t.checked); break;
+      case "seguir": seguir = t.checked; setPref("seguirNota", t.checked); break;
       case "aprendida": {
         const s = Number(t.dataset.s);
         marcarSeccion(c.id, s, t.checked);

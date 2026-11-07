@@ -25,24 +25,36 @@ const rutas = [
   { re: /^\/fuentes$/, vista: () => import("./vistas/fuentes.js"), nav: "fuentes" },
 ];
 
+let navegacion = 0;
+
 async function navegar() {
   const ruta = decodeURIComponent(location.hash.replace(/^#/, "")) || "/";
   const r = rutas.find((x) => x.re.test(ruta));
+  const esta = ++navegacion;
   limpiezaActual?.();
   limpiezaActual = null;
   document.querySelectorAll("[data-nav]").forEach((a) => a.classList.toggle("activo", r && a.dataset.nav === r.nav));
+  // Cada vista recibe un contenedor nuevo: al cambiar de página se descarta junto con
+  // todos sus manejadores de eventos (si no, los botones de una vista anterior seguían
+  // reaccionando, p. ej. «Escuchar» reproducía otra canción de fondo).
+  const vista = document.createElement("div");
+  vista.className = "vista";
+  main.replaceChildren(vista);
   if (!r) {
-    main.innerHTML = `<div class="vacio"><h1>No encontré esta página</h1><p><a href="#/">Volver a la biblioteca</a></p></div>`;
+    vista.innerHTML = `<div class="vacio"><h1>No encontré esta página</h1><p><a href="#/">Volver a la biblioteca</a></p></div>`;
     return;
   }
-  main.innerHTML = '<p class="cargando">Cargando…</p>';
+  vista.innerHTML = '<p class="cargando">Cargando…</p>';
   try {
     const mod = await r.vista();
     const params = ruta.match(r.re).slice(1);
-    limpiezaActual = (await mod.mostrar(main, params)) || null;
+    const limpieza = (await mod.mostrar(vista, params)) || null;
+    if (esta !== navegacion) { limpieza?.(); return; } // ya se navegó a otra página mientras cargaba
+    limpiezaActual = limpieza;
   } catch (err) {
     console.error(err);
-    main.innerHTML = `<div class="vacio"><h1>Algo salió mal</h1><p>${String(err.message || err)}</p><p><a href="#/">Volver a la biblioteca</a></p></div>`;
+    if (esta !== navegacion) return;
+    vista.innerHTML = `<div class="vacio"><h1>Algo salió mal</h1><p>${String(err.message || err)}</p><p><a href="#/">Volver a la biblioteca</a></p></div>`;
   }
   if (!location.hash.includes("?")) window.scrollTo(0, 0);
   main.focus({ preventScroll: true });

@@ -1,7 +1,7 @@
 // Partitura (piano / violín) desde MusicXML con OpenSheetMusicDisplay: ver, escuchar con cursor y leer el análisis.
 import { cargarIndice } from "../app.js";
 import { tocarNota, contexto } from "../audio.js";
-import { frecuencia } from "../notas.js";
+import { frecuencia, nombreNota, octava, CIFRADO } from "../notas.js";
 import { esc } from "../render.js";
 import { icono } from "../iconos.js";
 import { progresoDe, actualizar } from "../progreso.js";
@@ -67,9 +67,10 @@ export async function mostrar(main, [instrumento, carpeta]) {
           <label class="interruptor"><input type="checkbox" data-accion="mano-der" checked> Mano derecha</label>
           <label class="interruptor"><input type="checkbox" data-accion="mano-izq" checked> Mano izquierda</label>
         </div>
-        <p class="nota-texto">El cursor sigue la música; haz clic en cualquier compás para empezar desde ahí. La reproducción lee la partitura de corrido (sin hacer las repeticiones) para que sigas el cursor fácilmente.</p>
+        <p class="nota-texto">Pasa el mouse sobre una nota para ver cuál es; haz clic en ella para oírla. Haz clic en un espacio vacío de un compás para empezar a escuchar desde ahí. La reproducción lee la partitura de corrido (sin hacer las repeticiones) para que sigas el cursor fácilmente.</p>
       </div>
       <div class="partitura" id="osmd"><p class="cargando">Cargando partitura…</p></div>
+      <div class="globo-nota" role="tooltip" hidden></div>
     </section>
     <section data-panel="analisis" class="prosa" ${c.musicxml ? "hidden" : ""}><p class="cargando">Cargando…</p></section>
     <section data-panel="archivos" hidden>
@@ -121,6 +122,65 @@ export async function mostrar(main, [instrumento, carpeta]) {
     $("#osmd").innerHTML = `<p class="aviso">No pude mostrar la partitura: ${esc(err.message)}</p>`;
     return;
   }
+
+  // ---------- Nombre de la nota al pasar el mouse ----------
+  const DURACIONES = { 1: "redonda", 0.75: "blanca con puntillo", 0.5: "blanca", 0.375: "negra con puntillo", 0.25: "negra",
+    0.1875: "corchea con puntillo", 0.125: "corchea", 0.09375: "semicorchea con puntillo", 0.0625: "semicorchea", 0.03125: "fusa" };
+  const MANOS = ["mano derecha", "mano izquierda"];
+  let mapaNotas = null; // elemento SVG de la figura → notas que contiene (un acorde tiene varias)
+
+  function construirMapa() {
+    mapaNotas = new Map();
+    for (const medida of osmd.GraphicSheet.MeasureList) {
+      medida.forEach((gm, pentagrama) => {
+        for (const se of gm?.staffEntries || []) for (const gve of se.graphicalVoiceEntries) for (const gn of gve.notes) {
+          const n = gn.sourceNote;
+          if (!n || n.isRest() || n.halfTone === undefined) continue;
+          let el = null;
+          try { el = gn.getSVGGElement(); } catch { /* sin SVG */ }
+          if (!el) continue;
+          const lista = mapaNotas.get(el) || [];
+          lista.push({ midi: n.halfTone + 12, dur: n.Length.RealValue, pentagrama });
+          mapaNotas.set(el, lista);
+        }
+      });
+    }
+  }
+
+  function notasDe(figura) {
+    if (!mapaNotas || !mapaNotas.has(figura)) construirMapa(); // la partitura se redibuja al hacer zoom o cambiar el tamaño
+    return mapaNotas.get(figura) || [];
+  }
+
+  const globo = $(".globo-nota");
+  let figuraActiva = null;
+  function mostrarGlobo(figura, x, y) {
+    const notas = [...notasDe(figura)].sort((a, b) => b.midi - a.midi);
+    if (!notas.length) return ocultarGlobo();
+    figuraActiva?.classList.remove("nota-encima");
+    figuraActiva = figura;
+    figura.classList.add("nota-encima");
+    const nombres = notas.map((n) => `<b>${nombreNota(n.midi)}${octava(n.midi)}</b> <span>${CIFRADO[n.midi % 12]}${octava(n.midi)}</span>`).join("<br>");
+    const d = DURACIONES[Math.round(notas[0].dur * 100000) / 100000];
+    globo.innerHTML = `${nombres}<small>${[notas.length > 1 ? `acorde de ${notas.length} notas` : "", d, MANOS[notas[0].pentagrama] || ""].filter(Boolean).join(" · ")}</small>`;
+    globo.hidden = false;
+    const r = globo.getBoundingClientRect();
+    globo.style.left = `${Math.min(innerWidth - r.width - 8, Math.max(8, x + 14))}px`;
+    globo.style.top = `${y - r.height - 12 < 8 ? y + 18 : y - r.height - 12}px`;
+  }
+  function ocultarGlobo() {
+    globo.hidden = true;
+    figuraActiva?.classList.remove("nota-encima");
+    figuraActiva = null;
+  }
+  const zona = $("#osmd");
+  zona.addEventListener("mousemove", (e) => {
+    const figura = e.target.closest(".vf-stavenote");
+    if (figura) mostrarGlobo(figura, e.clientX, e.clientY);
+    else if (!globo.hidden) ocultarGlobo();
+  });
+  zona.addEventListener("mouseleave", ocultarGlobo);
+  addEventListener("scroll", ocultarGlobo, { passive: true });
 
   function construirEventos(o) {
     const lista = [];
@@ -186,7 +246,15 @@ export async function mostrar(main, [instrumento, carpeta]) {
       if (b.dataset.accion === "zoom+" || b.dataset.accion === "zoom-") {
         osmd.zoom = Math.max(0.4, Math.min(1.6, osmd.zoom + (b.dataset.accion === "zoom+" ? 0.1 : -0.1)));
         osmd.render();
+        mapaNotas = null;
       }
+      return;
+    }
+    // Clic en una nota → oírla (y ver su nombre, útil en pantallas táctiles).
+    const figura = e.target.closest("#osmd .vf-stavenote");
+    if (figura) {
+      for (const n of notasDe(figura)) tocarNota(frecuencia(n.midi), n.dur * redonda(), { timbre });
+      mostrarGlobo(figura, e.clientX, e.clientY);
       return;
     }
     // Clic en un compás de la partitura → empezar desde ahí.
@@ -208,5 +276,8 @@ export async function mostrar(main, [instrumento, carpeta]) {
   tempoEl.addEventListener("input", () => { tempo = Number(tempoEl.value); tempoEl.nextElementSibling.textContent = tempo; });
   tempoEl.addEventListener("change", () => actualizar(c.id, { tempo }));
 
-  return () => pausar();
+  return () => {
+    pausar();
+    removeEventListener("scroll", ocultarGlobo);
+  };
 }
