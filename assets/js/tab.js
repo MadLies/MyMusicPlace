@@ -2,7 +2,7 @@
 // y conversor desde otras notaciones habituales: (4) = aspirar, +4 = soplar, 6b = bend.
 
 const NOTA_RE = /-?(?:10|[1-9])['/]*/g;
-const CLAVES = new Set(["titulo", "subtitulo", "armonica", "tonalidad", "forma", "frases", "autor"]);
+const CLAVES = new Set(["titulo", "subtitulo", "armonica", "tonalidad", "forma", "frases", "autor", "fuente"]);
 
 export function parsearNota(raw) {
   const m = /^(-?)(10|[1-9])(['/]*)$/.exec(raw);
@@ -65,7 +65,7 @@ export function convertirNotacion(texto) {
     const l = raw.trim();
     if (!l) { salida.push(""); continue; }
     if (/^[#>]/.test(l) || /^\[.*\]$/.test(l)) { if (l.startsWith("[")) haySeccion = true; salida.push(l); continue; }
-    if (/^(titulo|subtitulo|armonica|tonalidad|forma|frases|autor)\s*:/i.test(l)) { salida.push(l); continue; }
+    if (/^(titulo|subtitulo|armonica|tonalidad|forma|frases|autor|fuente)\s*:/i.test(l)) { salida.push(l); continue; }
 
     if (/^[\d\s()+\-'’/bB,|_.]+$/.test(l) && /\d/.test(l)) {
       const partes = [];
@@ -139,6 +139,7 @@ export const PLANTILLA = `titulo: Nombre de la canción
 subtitulo: Artista
 armonica: C
 tonalidad: Do mayor · 1ª posición
+fuente: Tablatura recopilada y adaptada por madlies
 
 > Una nota corta sobre la canción (opcional).
 

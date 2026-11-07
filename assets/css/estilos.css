@@ -237,6 +237,17 @@ select, input[type="search"], textarea { font: inherit; color: var(--text); back
 .lista-archivos { list-style: none; padding: 0; }
 .lista-archivos a { display: inline-flex; gap: 6px; align-items: center; padding: 6px 0; }
 
+/* Fuentes */
+.fuente-linea { font-size: .85rem; color: var(--muted); margin: 8px 0 0; }
+.fuentes { max-width: 900px; }
+.aviso-fuentes { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--radio); padding: 4px 18px; margin: 16px 0 20px; }
+.tabla-fuentes { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radio); background: var(--surface); }
+.tabla-fuentes table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+.tabla-fuentes th, .tabla-fuentes td { padding: 10px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+.tabla-fuentes tr:last-child td { border-bottom: 0; }
+.tabla-fuentes th { background: var(--surface-2); font-weight: 600; white-space: nowrap; }
+.pie a { color: inherit; }
+
 /* Guía */
 .guia { max-width: 820px; }
 .guia section { scroll-margin-top: 72px; }

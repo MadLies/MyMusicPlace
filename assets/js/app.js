@@ -22,6 +22,7 @@ const rutas = [
   { re: /^\/guia$/, vista: () => import("./vistas/guia.js"), nav: "guia" },
   { re: /^\/afinador$/, vista: () => import("./vistas/afinador.js"), nav: "afinador" },
   { re: /^\/editor$/, vista: () => import("./vistas/editor.js"), nav: "editor" },
+  { re: /^\/fuentes$/, vista: () => import("./vistas/fuentes.js"), nav: "fuentes" },
 ];
 
 async function navegar() {

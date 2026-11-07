@@ -35,6 +35,17 @@ def primero(carpeta, patron):
     return rel(encontrados[0]) if encontrados else None
 
 
+def leer_fuente(carpeta):
+    """Primera línea de 01_referencias/fuente.txt (si existe)."""
+    f = carpeta / "01_referencias" / "fuente.txt"
+    if not f.is_file():
+        return ""
+    for linea in f.read_text(encoding="utf-8").splitlines():
+        if linea.strip():
+            return linea.strip()
+    return ""
+
+
 def titulo_desde_carpeta(nombre):
     return re.sub(r"(?<=[a-z])(?=[A-Z])", " ", nombre)
 
@@ -90,6 +101,7 @@ def cancion_armonica(carpeta):
         "tonalidad": meta.get("tonalidad", ""),
         "tab": rel(tab),
         "pdf": primero(carpeta / "03_exportados" / "pdf", "*.pdf"),
+        "fuente": meta.get("fuente", ""),
         "secciones": [s["titulo"] for s in secciones],
         "stats": estadisticas(secciones),
     }
@@ -122,6 +134,7 @@ def cancion_partitura(carpeta, instrumento):
         "pdf": rel(principal) if principal else None,
         "mscz": primero(carpeta / "02_editable", "*.mscz"),
         "notas": primero(carpeta, "*.md"),
+        "fuente": leer_fuente(carpeta),
         "extras": [rel(p) for p in pdfs if p != principal],
     }
 

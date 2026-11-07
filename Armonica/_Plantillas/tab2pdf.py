@@ -13,6 +13,7 @@ Formato del .tab (ver Tablatura_en_blanco.tab):
     subtitulo: ...
     armonica: C             tono de la armónica (para los nombres de las notas)
     tonalidad: ...          texto libre
+    fuente: ...             de dónde sale la tablatura (puede llevar un enlace)
     forma: G7 G7 G7 G7 | C7 C7 G7 G7 | D7 C7 G7 D7   (opcional, cuadro de compases)
     frases: 1 1 1 1 | 2 2 3 3 | 4 4 5 5                (opcional, qué frase va en cada compás)
     [Nombre | detalle | acorde]   empieza una sección
@@ -37,7 +38,7 @@ TONOS = {"C": 0, "C#": 1, "DB": 1, "D": 2, "D#": 3, "EB": 3, "E": 4, "F": 5, "F#
 # Afinación Richter (armónica diatónica de 10 hoyos): semitonos sobre la tónica
 SOPLA = {1: 0, 2: 4, 3: 7, 4: 12, 5: 16, 6: 19, 7: 24, 8: 28, 9: 31, 10: 36}
 ASPIRA = {1: 2, 2: 7, 3: 11, 4: 14, 5: 17, 6: 21, 7: 23, 8: 26, 9: 29, 10: 33}
-CLAVES = {"titulo", "subtitulo", "armonica", "tonalidad", "forma", "frases", "autor"}
+CLAVES = {"titulo", "subtitulo", "armonica", "tonalidad", "forma", "frases", "autor", "fuente"}
 NOTA_RE = re.compile(r"-?(?:10|[1-9])['/]*")
 
 
@@ -127,6 +128,8 @@ h1 { font-size: 22pt; margin: 0; letter-spacing: -0.01em; }
 .sub { color: #57606a; margin: 2px 0 8px; font-size: 11pt; }
 .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 9.5pt; color: #3d444d; }
 .meta b { color: #1f2328; }
+.meta .fuente { flex-basis: 100%; font-size: 8.5pt; color: #57606a; }
+.meta a { color: inherit; word-break: break-all; }
 .intro p { margin: 0 0 6px; }
 .leyenda { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; border: 1px solid #d0d7de;
            border-radius: 8px; padding: 8px 12px; margin: 10px 0 14px; font-size: 9pt; color: #3d444d; }
@@ -181,6 +184,9 @@ def construir_html(meta, intro, secciones):
         info.append(f'<span><b>Tonalidad:</b> {e(meta["tonalidad"])}</span>')
     if meta.get("autor"):
         info.append(f'<span><b>Autor:</b> {e(meta["autor"])}</span>')
+    if meta.get("fuente"):
+        fuente = re.sub(r"(https?://[^\s)]+)", r'<a href="\1">\1</a>', e(meta["fuente"]))
+        info.append(f'<span class="fuente"><b>Fuente:</b> {fuente}</span>')
     partes.append('<div class="meta">' + "".join(info) + "</div></header>")
     if intro:
         partes.append('<div class="intro">' + "".join(f"<p>{e(t)}</p>" for _, t in intro) + "</div>")

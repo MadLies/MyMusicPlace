@@ -8,6 +8,7 @@ import { Microfono } from "../microfono.js";
 import { TONOS_ARMONICA, normalizarTono, nombreTono, midiNota, nombreNota, textoNota, describirNota, midiDeFrecuencia, notasArmonica } from "../notas.js";
 import { progresoDe, actualizar, marcarSeccion, pref, setPref } from "../progreso.js";
 import { icono } from "../iconos.js";
+import { fuenteHTML } from "./fuentes.js";
 
 export async function mostrar(main, [carpeta]) {
   const { canciones } = await cargarIndice();
@@ -33,6 +34,7 @@ export async function mostrar(main, [carpeta]) {
           <span>${st.bends ? `${st.bends} bend${st.bends > 1 ? "s" : ""}` : "sin bends"}</span>
           <span>hoyos ${st.hoyoMin}–${st.hoyoMax}</span>
         </p>
+        ${tab.meta.fuente ? `<p class="fuente-linea">Fuente: ${fuenteHTML(tab.meta.fuente)} · <a href="#/fuentes">sobre las fuentes</a></p>` : ""}
       </div>
       <div class="acciones-cab">
         ${c.pdf ? `<a class="btn" href="${esc(c.pdf)}" target="_blank" rel="noopener">${icono("pdf")}PDF</a>` : ""}

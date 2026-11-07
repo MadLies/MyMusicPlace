@@ -1,5 +1,5 @@
 {
-  "generado": "2026-11-07T11:54:47+00:00",
+  "generado": "2026-11-07T12:01:08+00:00",
   "canciones": [
     {
       "id": "armonica/Flaca",
@@ -11,6 +11,7 @@
       "tonalidad": "Do mayor · 1ª posición",
       "tab": "Armonica/Flaca/02_editable/Flaca.tab",
       "pdf": "Armonica/Flaca/03_exportados/pdf/Flaca.pdf",
+      "fuente": "Tablatura de Ivan Vanioff publicada en LaCuerda.net (https://acordes.lacuerda.net/andres_calamaro/flaca-8.shtml), adaptada por madlies",
       "secciones": [
         "Punteado",
         "Solo de saxo",
@@ -36,6 +37,7 @@
       "tonalidad": "La menor (Am) · hoyos 6 a 10",
       "tab": "Armonica/LaLeyendaDelHadaYElMago/02_editable/LaLeyendaDelHadaYElMago.tab",
       "pdf": "Armonica/LaLeyendaDelHadaYElMago/03_exportados/pdf/LaLeyendaDelHadaYElMago.pdf",
+      "fuente": "Tablatura recopilada y adaptada por madlies",
       "secciones": [
         "Estrofa",
         "Estribillo",
@@ -63,6 +65,7 @@
       "tonalidad": "La menor (Am)",
       "tab": "Armonica/Lambada/02_editable/Lambada.tab",
       "pdf": "Armonica/Lambada/03_exportados/pdf/Lambada.pdf",
+      "fuente": "Tablatura recopilada y adaptada por madlies",
       "secciones": [
         "Parte A",
         "Parte B",
@@ -88,6 +91,7 @@
       "tonalidad": "1ª posición · sin bends · hoyos 3 a 6",
       "tab": "Armonica/OneSummersDay/02_editable/OneSummersDay.tab",
       "pdf": "Armonica/OneSummersDay/03_exportados/pdf/OneSummersDay.pdf",
+      "fuente": "Tablatura «Spirited Away - One Summer's Day Easy» de harmonicasong.com (https://harmonicasong.com/harp-tabs/spirited-away-one-summers-day-easy/), adaptada por madlies",
       "secciones": [
         "Parte A",
         "Parte A",
@@ -116,6 +120,7 @@
       "tonalidad": "La menor (Am)",
       "tab": "Armonica/Tetris/02_editable/Tetris.tab",
       "pdf": "Armonica/Tetris/03_exportados/pdf/Tetris.pdf",
+      "fuente": "Tablatura recopilada y adaptada por madlies (melodía tradicional rusa)",
       "secciones": [
         "Parte A",
         "Parte B",
@@ -141,6 +146,7 @@
       "tonalidad": "Re menor · 3ª posición",
       "tab": "Armonica/ThePlaceIllReturnToSomeday/02_editable/ThePlaceIllReturnToSomeday.tab",
       "pdf": "Armonica/ThePlaceIllReturnToSomeday/03_exportados/pdf/ThePlaceIllReturnToSomeday.pdf",
+      "fuente": "Tablatura recopilada y adaptada por madlies",
       "secciones": [
         "Parte A",
         "Parte A",
@@ -168,6 +174,7 @@
       "tonalidad": "Sol (G)",
       "tab": "Armonica/VueltaDeBlues/02_editable/VueltaDeBlues.tab",
       "pdf": "Armonica/VueltaDeBlues/03_exportados/pdf/VueltaDeBlues.pdf",
+      "fuente": "Tablatura recopilada y adaptada por madlies",
       "secciones": [
         "Frase 1",
         "Frase 2",
@@ -196,6 +203,7 @@
       "pdf": "Piano/NoviembreSinTi/03_exportados/pdf/NoviembreSinTi.pdf",
       "mscz": "Piano/NoviembreSinTi/02_editable/NoviembreSinTi.mscz",
       "notas": "Piano/NoviembreSinTi/Analisis_y_plan.md",
+      "fuente": "Arreglo para piano hecho por madlies en MuseScore (ver Analisis_y_plan.md)",
       "extras": [
         "Piano/NoviembreSinTi/03_exportados/pdf/Analisis_y_plan.pdf"
       ]

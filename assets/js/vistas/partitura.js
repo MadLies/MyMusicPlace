@@ -5,6 +5,7 @@ import { frecuencia } from "../notas.js";
 import { esc } from "../render.js";
 import { icono } from "../iconos.js";
 import { progresoDe, actualizar } from "../progreso.js";
+import { fuenteHTML } from "./fuentes.js";
 
 const OSMD_URL = "https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.8.9/build/opensheetmusicdisplay.min.js";
 const MARKED_URL = "https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js";
@@ -33,6 +34,7 @@ export async function mostrar(main, [instrumento, carpeta]) {
       <div>
         <h1>${esc(c.titulo)}</h1>
         ${c.subtitulo ? `<p class="sub">${esc(c.subtitulo)}</p>` : ""}
+        ${c.fuente ? `<p class="fuente-linea">Fuente: ${fuenteHTML(c.fuente)} · <a href="#/fuentes">sobre las fuentes</a></p>` : ""}
       </div>
       <div class="acciones-cab">
         ${c.pdf ? `<a class="btn" href="${esc(c.pdf)}" target="_blank" rel="noopener">${icono("pdf")}PDF</a>` : ""}
