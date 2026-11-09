@@ -20,6 +20,8 @@ Partituras de piano y violín y tablaturas de armónica, organizadas por instrum
   - *Escalas*: las 12 tonalidades en el teclado del piano (mayor, las tres menores, los 7 modos griegos,
     pentatónicas y blues), bien escritas (Fa♯ en Re mayor, no Sol♭), con fórmula, grados, armadura,
     relativa, nota característica de cada modo y la galería de las 12.
+    También en el diapasón del violín: notas de la escala en cada cuerda, dedos y patrón de dedos
+    en 1ª posición (qué dedos van juntos) y la escala para escuchar en una o dos octavas.
   - *Armonía*: los acordes de cada tonalidad (tríadas o con 7ª) con su número romano y su función
     (tónica, subdominante, dominante), progresiones típicas para escuchar, dominantes secundarias
     (V7/ii, V7/V…), préstamo modal, napolitano, sustituto tritonal y el círculo de quintas.

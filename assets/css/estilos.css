@@ -690,3 +690,43 @@ td.alto, td.bajo { color: #b07400; font-weight: 600; }
   .seccion { break-inside: avoid; box-shadow: none; }
   .n { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* ---------- Escalas en el violín ---------- */
+.violin-panel { margin-top: 16px; }
+.violin-cuerpo { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 24px; align-items: start; }
+.violin-cuerpo h3 { margin: 4px 0 4px; }
+.diapason-svg { display: block; width: 100%; max-width: 340px; height: auto; margin: 0 auto 8px; user-select: none; }
+.vd-madera { fill: #2b211c; }
+.vd-linea { stroke: rgba(255, 255, 255, .10); stroke-width: 1; }
+.vd-linea.fin { stroke: rgba(242, 182, 50, .6); stroke-dasharray: 5 4; }
+.vd-cejuela { fill: #e9dfc9; stroke: #b9ad94; stroke-width: 1; }
+.vd-cuerda { stroke: #cfc6b4; }
+.vd-zona { font-family: var(--fuente); font-size: 11px; fill: var(--muted); text-anchor: end; }
+.vd-cuerda-nombre { font-family: var(--fuente); font-size: 13px; font-weight: 700; fill: var(--text); text-anchor: middle; }
+.vd { cursor: pointer; }
+.vd-hit { fill: transparent; }
+.vd-punto { fill: #9b9284; transition: fill .12s; }
+.vd:not(.on):hover .vd-punto { fill: #f2b632; }
+.vd-c { fill: var(--surface); stroke: var(--accent); stroke-width: 2.5; transition: fill .12s; }
+.vd:hover .vd-c { stroke-width: 3.5; }
+.vd.tonica .vd-c { fill: var(--accent); }
+.vd.caract .vd-c { stroke: #f2b632; stroke-width: 4; }
+.vd-t, .vd-dedo-t { font-family: var(--fuente); text-anchor: middle; pointer-events: none; }
+.vd-t { font-size: 12px; font-weight: 700; fill: var(--text); }
+.vd.tonica .vd-t { fill: var(--accent-text); }
+.vd-dedo { fill: #f2b632; stroke: #2b211c; stroke-width: 1.5; pointer-events: none; }
+.vd-dedo-t { font-size: 10.5px; font-weight: 800; fill: #1f2328; }
+.vd.pulsada .vd-c, .vd.pulsada .vd-punto { fill: #f2b632; }
+.vd.pulsada .vd-t { fill: #1f2328; }
+.digitacion { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; }
+.dig-fila { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 4px 10px; align-items: center; padding-bottom: 9px; border-bottom: 1px solid var(--line); }
+.dig-cuerda { font-size: 1.05rem; }
+.dig-notas { display: flex; flex-wrap: wrap; gap: 6px; }
+.dig-fila .sub { grid-column: 2; font-size: .85rem; }
+.dg { display: inline-flex; align-items: center; gap: 5px; padding: 3px 5px 3px 9px; border-radius: 99px; background: var(--accent-soft); }
+.dg.tonica { background: var(--accent); color: var(--accent-text); }
+.dg i { font-style: normal; font-size: .75rem; font-weight: 800; min-width: 18px; padding: 1px 4px; text-align: center; border-radius: 99px; background: #f2b632; color: #1f2328; }
+.vd-info { min-height: 2.6em; padding: 8px 12px; border-radius: 10px; background: var(--surface-2); font-size: .92rem; }
+@media (max-width: 760px) {
+  .violin-cuerpo { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+}

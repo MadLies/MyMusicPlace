@@ -8,6 +8,7 @@ import {
   FUNCIONES, PROGRESIONES,
 } from "../teoria.js";
 import { tecladoSVG, pulsar } from "../teclado.js";
+import { diapasonSVG, pulsarViolin, dedosCuerda, posicionViolin, CUERDAS_VIOLIN, ZONA, FIN_PRIMERA } from "../diapason.js";
 import { tocarNota } from "../audio.js";
 import { frecuencia } from "../notas.js";
 import { pref, setPref } from "../progreso.js";
@@ -21,6 +22,8 @@ export async function mostrar(main, [pestanaRuta]) {
   let tipo = pref("teoriaTipo", "mayor");
   if (!ESCALAS[tipo]) tipo = "mayor";
   let etiquetas = pref("teoriaEtiquetas", "nombres");
+  let instr = pref("teoriaInstrumento", "piano"); // piano | violin | ambos
+  let violinAlto = pref("teoriaViolinAlto", false);
   let modo = pref("armoniaModo", "mayor");
   let septimas = pref("armoniaSeptimas", false);
 
@@ -59,22 +62,119 @@ export async function mostrar(main, [pestanaRuta]) {
   }
 
   // ================================================================ ESCALAS
-  function marcasEscala(t, notas, conEtiquetas, desde, hasta) {
+  // Cómo se marca una nota de la escala (en el teclado o en el diapasón); null si no está.
+  function marcaDe(notas, m, conEtiquetas = true) {
     const grados = formulaGrados(tipo);
     const car = ESCALAS[tipo].caracteristica;
+    const i = notas.findIndex((n) => pc(n) === mod12(m));
+    if (i < 0) return null;
+    const n = notas[i];
+    const texto = etiquetas === "cifrado" ? cifra(n) : etiquetas === "grados" ? grados[i].texto : nombre(n);
+    return {
+      tipo: (i === 0 ? "tonica" : "escala") + (i === car ? " caract" : ""),
+      texto: conEtiquetas ? texto : "",
+      sub: conEtiquetas ? (etiquetas === "grados" ? nombre(n) : grados[i].texto) : "",
+      n, i,
+    };
+  }
+  function marcasEscala(t, notas, conEtiquetas, desde, hasta) {
     const marcas = new Map();
     for (let m = desde; m <= hasta; m++) {
-      const i = notas.findIndex((n) => pc(n) === mod12(m));
-      if (i < 0) continue;
-      const n = notas[i];
-      const texto = etiquetas === "cifrado" ? cifra(n) : etiquetas === "grados" ? grados[i].texto : nombre(n);
-      marcas.set(m, {
-        tipo: (i === 0 ? "tonica" : "escala") + (i === car ? " caract" : ""),
-        texto: conEtiquetas ? texto : "",
-        sub: conEtiquetas ? (etiquetas === "grados" ? nombre(n) : grados[i].texto) : "",
-      });
+      const mk = marcaDe(notas, m, conEtiquetas);
+      if (mk) marcas.set(m, mk);
     }
     return marcas;
+  }
+
+  // ---------------------------------------------------------------- Violín
+  // Escala en 1ª posición: desde la tónica más grave del violín; dos octavas si caben (hasta el 4º dedo en Mi).
+  function rangoViolin() {
+    const base = 55 + mod12(p - 7);
+    return { base, octavas: base + 24 <= 76 + FIN_PRIMERA ? 2 : 1 };
+  }
+
+  function patronDedos(dedos, k) {
+    const ss = [...dedos.keys()].filter((s) => s > 0).sort((a, b) => a - b);
+    const partes = [];
+    if (ss[0] === 1) partes.push("1 bajo, pegado a la cejuela");
+    for (let j = 1; j < ss.length; j++) {
+      const a = ss[j - 1], b = ss[j], da = dedos.get(a), db = dedos.get(b);
+      if (b - a === 1) partes.push(da === db ? `el ${da} se desliza medio tono` : `<b>${da} y ${db} juntos</b>`);
+      else if (b - a === 3) partes.push(`tono y medio entre ${da} y ${db}`);
+    }
+    if (dedos.has(FIN_PRIMERA) && CUERDAS_VIOLIN[k + 1]) partes.push(`el 4 suena igual que la cuerda ${CUERDAS_VIOLIN[k + 1].id} al aire`);
+    return partes.length ? partes.join(" · ") : "sin dedos juntos";
+  }
+
+  function panelViolin(t, notas) {
+    const e = ESCALAS[tipo];
+    const marca = (m) => marcaDe(notas, m);
+    const { base, octavas } = rangoViolin();
+    const ini = posicionViolin(base);
+    const filas = CUERDAS_VIOLIN.map((c, k) => {
+      const dedos = dedosCuerda(c, (m) => !!marca(m));
+      const chips = [...dedos].map(([s, d]) => {
+        const mk = marca(c.midi + s);
+        return `<span class="dg${mk.i === 0 ? " tonica" : ""}" title="${ZONA[s]}"><b>${nombre(mk.n)}</b><i>${d}</i></span>`;
+      }).join("");
+      return `<div class="dig-fila"><b class="dig-cuerda">${c.id}</b><div class="dig-notas">${chips || "—"}</div><div class="sub">${patronDedos(dedos, k)}</div></div>`;
+    }).join("");
+    return `
+      <div class="panel violin-panel">
+        <div class="teclado-cab">
+          <h2>${nombre(t)} ${e.nombre} en el violín</h2>
+          <button type="button" class="btn-play" data-accion="tocar-violin" data-reproduce data-etq="Escuchar">${icono("play")}<span>Escuchar</span></button>
+        </div>
+        <div class="violin-cuerpo">
+          <div>
+            ${diapasonSVG({ marca, hasta: violinAlto ? 12 : FIN_PRIMERA, titulo: `Escala de ${nombre(t)} ${e.nombre} en el diapasón del violín` })}
+            <label class="interruptor"><input type="checkbox" data-accion="violin-alto" ${violinAlto ? "checked" : ""}> Ver más arriba (hasta la octava de cada cuerda)</label>
+          </div>
+          <div>
+            <h3>Digitación en 1ª posición</h3>
+            <p class="sub">Cada nota con su dedo (0 = cuerda al aire). La 1ª posición es la de la mano cerca de la voluta: el 1er dedo a un tono de la cuerda al aire.</p>
+            <div class="digitacion">${filas}</div>
+            <p class="nota-texto">«Escuchar» toca ${octavas === 2 ? "dos octavas" : "una octava"} desde el ${nombre(t)} más grave del violín: cuerda ${ini.cuerda.id}, ${ini.s === 0 ? "al aire" : `dedo ${ZONA[ini.s]}`}.</p>
+            <div class="vd-info" id="vd-info" aria-live="polite">Toca un punto del diapasón para oír la nota.</div>
+          </div>
+        </div>
+        <p class="nota-texto">Vista del diapasón como si miraras tu violín: la voluta arriba y el puente abajo; de izquierda a derecha, de la cuerda más grave (Sol) a la más aguda (Mi). Cada fila es medio tono (el violín no tiene trastes: las líneas son solo una guía). El número amarillo es el dedo en 1ª posición.</p>
+      </div>`;
+  }
+
+  function notaViolin(m, dur, pos = posicionViolin(m)) {
+    tocarNota(frecuencia(m), dur, { timbre: "violin", volumen: 0.2 });
+    if (pos) pulsarViolin(main.querySelector(".diapason-svg"), CUERDAS_VIOLIN.indexOf(pos.cuerda), pos.s, Math.max(220, dur * 900));
+  }
+
+  function tocarEscalaViolin(b) {
+    if (sonando === "violin") { parar(); return; }
+    parar();
+    sonando = "violin";
+    botonSonando(b);
+    const { base, octavas } = rangoViolin();
+    const sube = [];
+    for (let o = 0; o < octavas; o++) ESCALAS[tipo].pasos.forEach((x) => sube.push(base + 12 * o + x));
+    sube.push(base + 12 * octavas);
+    const secuencia = [...sube, ...sube.slice(0, -1).reverse()];
+    secuencia.forEach((m, i) => despues(i * 360, () => notaViolin(m, 0.45)));
+    despues(secuencia.length * 360 + 300, parar);
+  }
+
+  function infoViolin(g) {
+    const midi = Number(g.dataset.midi), k = Number(g.dataset.cuerda), s = Number(g.dataset.s);
+    const c = CUERDAS_VIOLIN[k];
+    const t = tonicaDe(p, tipo), notas = escala(t, tipo);
+    const mk = marcaDe(notas, midi);
+    const dedo = mk && s > 0 && s <= FIN_PRIMERA ? dedosCuerda(c, (m) => !!marcaDe(notas, m)).get(s) : null;
+    const donde = s === 0 ? "al aire" : s <= FIN_PRIMERA ? `${dedo ? `dedo ${dedo}` : ZONA[s]} en 1ª posición` : "más arriba (3ª posición o más)";
+    const que = mk ? `es el grado <b>${formulaGrados(tipo)[mk.i].texto}</b> de ${nombre(t)} ${ESCALAS[tipo].nombre}` : `no está en ${nombre(t)} ${ESCALAS[tipo].nombre}`;
+    // Fuera de la escala: con ♭ si la escala usa bemoles, con ♯ si no.
+    const conBemoles = notas.some((n) => n.a < 0);
+    const alt = [...Array(7).keys()].map((l) => deletrear(midi, l)).filter((n) => Math.abs(n.a) <= 1)
+      .sort((x, y) => Math.abs(x.a) - Math.abs(y.a) || (conBemoles ? x.a - y.a : y.a - x.a))[0];
+    const nom = mk ? nombre(mk.n) : nombre(alt);
+    return `<b>${nom}</b> · cuerda ${c.id}, ${donde} — ${que}.`;
   }
 
   function relacion(t, e) {
@@ -189,7 +289,12 @@ export async function mostrar(main, [pestanaRuta]) {
         <label class="campo">Escala
           <select data-accion="tipo">${GRUPOS.map((g) => `<optgroup label="${g.nombre}">${g.tipos.map((x) => `<option value="${x}" ${x === tipo ? "selected" : ""}>${ESCALAS[x].nombre}</option>`).join("")}</optgroup>`).join("")}</select>
         </label>
-        <label class="campo">En las teclas
+        <div class="segmentos" role="radiogroup" aria-label="Ver en">
+          <button type="button" role="radio" data-instr="piano" aria-checked="${instr === "piano"}">Piano</button>
+          <button type="button" role="radio" data-instr="violin" aria-checked="${instr === "violin"}">Violín</button>
+          <button type="button" role="radio" data-instr="ambos" aria-checked="${instr === "ambos"}">Los dos</button>
+        </div>
+        <label class="campo">Etiquetas
           <select data-accion="etiquetas">
             <option value="nombres" ${etiquetas === "nombres" ? "selected" : ""}>Do Re Mi</option>
             <option value="cifrado" ${etiquetas === "cifrado" ? "selected" : ""}>C D E</option>
@@ -198,14 +303,15 @@ export async function mostrar(main, [pestanaRuta]) {
         </label>
       </div>
       <div class="tonicas" role="group" aria-label="Tónica">${Array.from({ length: 12 }, (_, i) => `<button type="button" data-tonica="${i}" aria-pressed="${i === p}">${nombre(tonicaDe(i, tipo))}</button>`).join("")}</div>
-      <div class="panel teclado-panel">
+      ${instr !== "violin" ? `<div class="panel teclado-panel">
         <div class="teclado-cab">
-          <h2>${nombre(t)} ${e.nombre}</h2>
+          <h2>${nombre(t)} ${e.nombre}${instr === "ambos" ? " en el piano" : ""}</h2>
           <button type="button" class="btn-play" data-accion="tocar-escala" data-reproduce data-etq="Escuchar">${icono("play")}<span>Escuchar</span></button>
         </div>
         <div class="teclado-principal">${tecladoSVG({ desde: 60, hasta: 83, marcas: marcasEscala(t, notas, true, 60, 83), titulo: `Escala de ${nombre(t)} ${e.nombre}` })}</div>
         <p class="nota-texto">Toca una tecla para oírla. La tónica va en color fuerte${e.caracteristica !== undefined ? "; la nota característica del modo, con un anillo" : ""}.</p>
-      </div>
+      </div>` : ""}
+      ${instr !== "piano" ? panelViolin(t, notas) : ""}
       <div class="teoria-dos">
         ${fichaEscala(t, notas)}
         ${comparar()}
@@ -457,6 +563,7 @@ export async function mostrar(main, [pestanaRuta]) {
       <details><summary>Las tres menores</summary><p><b>Natural</b>: T St T T St T T, las mismas notas que su relativa mayor. <b>Armónica</b>: sube el 7º grado para tener sensible (una nota a medio tono de la tónica que «tira» hacia ella). <b>Melódica</b>: sube el 6º y el 7º para evitar el salto de tono y medio de la armónica.</p></details>
       <details><summary>Los modos griegos</summary><p>Son la escala mayor empezando en cada una de sus notas: desde Do, jónico; desde Re, dórico; desde Mi, frigio; desde Fa, lidio; desde Sol, mixolidio; desde La, eólico; desde Si, locrio. Hay dos formas de pensarlos:</p><ul><li><b>Relativa</b>: Re dórico tiene las mismas notas que Do mayor.</li><li><b>Paralela</b>: Re dórico es Re menor con la 6ª mayor. Esta sirve más para tocar, porque te dice qué nota cambia: la <b>nota característica</b> de cada modo.</li></ul><p>Modos mayores (con 3ª mayor): lidio, jónico y mixolidio. Modos menores: dórico, eólico y frigio. El locrio es disminuido.</p></details>
       <details><summary>Armaduras y círculo de quintas</summary><p>Orden de los sostenidos: <b>Fa Do Sol Re La Mi Si</b>. Orden de los bemoles: al revés, <b>Si Mi La Re Sol Do Fa</b>. Truco: con sostenidos, la tónica mayor está medio tono por encima del último sostenido (Fa♯ → Sol mayor). Con bemoles, la tónica es el penúltimo bemol (Si♭ Mi♭ → Si♭ mayor).</p></details>
+      <details><summary>Escalas en el violín: patrones de dedos</summary><p>Las cuerdas del violín están afinadas por quintas (Sol Re La Mi), así que en 1ª posición cada cuerda tiene 4 notas pisadas antes de llegar a la siguiente cuerda al aire. Lo que cambia de una escala a otra es dónde quedan los <b>medios tonos</b>, es decir, qué dedos van <b>juntos</b>:</p><ul><li><b>2 y 3 juntos</b> (2 alto): el patrón de la escala mayor desde la cuerda al aire. Ejemplo: Re mayor en la cuerda Re (Re Mi Fa♯ Sol).</li><li><b>1 y 2 juntos</b> (2 bajo): el patrón menor. Ejemplo: Sol mayor en la cuerda La (La Si Do Re), o La menor.</li><li><b>3 y 4 juntos</b>: aparece en la cuerda donde la escala sube a la sensible. Ejemplo: Sol mayor en la cuerda Re (… Fa♯ Sol).</li><li><b>1 bajo</b>: cuando la nota está a medio tono de la cuerda al aire, el 1er dedo se pega a la cejuela (Si♭ en la cuerda La, en Fa mayor).</li></ul><p>Las escalas que empiezan en una cuerda al aire (Sol, Re, La) son las más cómodas al principio, por eso los métodos empiezan por Re mayor, La mayor y Sol mayor.</p></details>
       <details><summary>Pentatónicas y blues</summary><p>Escalas de 5 notas sin semitonos: suenan bien casi sobre cualquier acorde de su tonalidad, por eso son las primeras para improvisar. La de blues añade la ♭5, la «blue note», que se toca de paso. En la armónica son la base del blues en 2ª posición.</p></details>
     </section>`;
   }
@@ -500,7 +607,7 @@ export async function mostrar(main, [pestanaRuta]) {
     const gal = t.closest("[data-tonica-galeria]");
     if (gal) {
       p = Number(gal.dataset.tonicaGaleria); setPref("teoriaTonica", p); pintar();
-      main.querySelector(".teclado-panel")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      main.querySelector(".teclado-panel, .violin-panel")?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
     const fila = t.closest("[data-tipo]");
@@ -513,6 +620,15 @@ export async function mostrar(main, [pestanaRuta]) {
       const [np, nm] = irE.dataset.irEscala.split(":");
       p = Number(np); tipo = nm; setPref("teoriaTonica", p); setPref("teoriaTipo", tipo);
       pestana = "escalas"; setPref("teoriaPestana", pestana); pintar(); window.scrollTo(0, 0);
+      return;
+    }
+    const ins = t.closest("[data-instr]");
+    if (ins) { if (ins.dataset.instr !== instr) { instr = ins.dataset.instr; setPref("teoriaInstrumento", instr); pintar(); } return; }
+    const vd = t.closest(".diapason-svg .vd");
+    if (vd) {
+      notaViolin(Number(vd.dataset.midi), 0.7, { cuerda: CUERDAS_VIOLIN[Number(vd.dataset.cuerda)], s: Number(vd.dataset.s) });
+      const info = $("#vd-info");
+      if (info) info.innerHTML = infoViolin(vd);
       return;
     }
     const tecla = t.closest(".teclado:not(.mini) rect[data-midi]");
@@ -531,6 +647,7 @@ export async function mostrar(main, [pestanaRuta]) {
     const r = registro.get(elegido);
     switch (b.dataset.accion) {
       case "tocar-escala": tocarEscala(b); break;
+      case "tocar-violin": tocarEscalaViolin(b); break;
       case "prog": tocarProgresion(b); break;
       case "sel-tocar": if (r) tocarAcorde(r.acorde); break;
       case "sel-arpegio": if (r) { parar(); arpegio(r.acorde); } break;
@@ -562,6 +679,7 @@ export async function mostrar(main, [pestanaRuta]) {
     if (a === "tipo") { tipo = e.target.value; setPref("teoriaTipo", tipo); pintar(); }
     if (a === "etiquetas") { etiquetas = e.target.value; setPref("teoriaEtiquetas", etiquetas); pintar(); }
     if (a === "tonica") { p = Number(e.target.value); setPref("teoriaTonica", p); elegido = null; pintar(); }
+    if (a === "violin-alto") { violinAlto = e.target.checked; setPref("teoriaViolinAlto", violinAlto); pintar(); }
     if (a === "septimas") { septimas = e.target.checked; setPref("armoniaSeptimas", septimas); pintar(); }
   });
 
