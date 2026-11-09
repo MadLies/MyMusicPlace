@@ -38,3 +38,10 @@ jobs:
           path: .
       - id: despliegue
         uses: actions/deploy-pages@v4
+      # Si existe el secreto CF_HOOK_PRIVADO (deploy hook de Cloudflare Pages), avisa al sitio
+      # privado para que se reconstruya con esta versión de la app.
+      - name: Reconstruir el sitio privado
+        env:
+          HOOK: ${{ secrets.CF_HOOK_PRIVADO }}
+        run: |
+          if [ -n "$HOOK" ]; then curl -fsS -X POST "$HOOK" > /dev/null && echo "Sitio privado avisado"; else echo "Sin sitio privado configurado"; fi

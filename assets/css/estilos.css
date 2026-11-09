@@ -878,3 +878,4 @@ code.b-dat { background: color-mix(in srgb, var(--accent) 22%, transparent); pad
   .ap-fila { grid-template-columns: 1fr; gap: 0; }
 }
 .rollo-estado { font-size: .82rem; color: var(--muted); padding: 4px 4px 0; min-height: 1.6em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.visor-pdf { display: block; width: 100%; height: min(88vh, 1100px); border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }

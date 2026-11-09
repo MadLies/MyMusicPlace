@@ -36,20 +36,26 @@ def primero(carpeta, patron):
 
 
 def leer_fuente(carpeta):
-    """(fuente, nivel) desde 01_referencias/fuente.txt: la primera línea es la fuente y una
-    línea opcional «nivel: N» (1-5) indica la dificultad."""
+    """Datos de 01_referencias/fuente.txt: la primera línea libre es la fuente. Líneas opcionales:
+    «nivel: N» (1-5, dificultad), «titulo: …» y «subtitulo: …» (para partituras que solo tienen PDF,
+    sin MusicXML del que sacar el título y el compositor)."""
+    datos = {"fuente": "", "nivel": None, "titulo": "", "subtitulo": ""}
     f = carpeta / "01_referencias" / "fuente.txt"
     if not f.is_file():
-        return "", None
-    fuente, nivel = "", None
+        return datos
     for linea in f.read_text(encoding="utf-8").splitlines():
         linea = linea.strip()
-        m = re.fullmatch(r"nivel\s*:\s*([1-5])", linea, re.I)
+        m = re.fullmatch(r"(nivel|titulo|subtitulo)\s*:\s*(.+)", linea, re.I)
         if m:
-            nivel = int(m.group(1))
-        elif linea and not fuente:
-            fuente = linea
-    return fuente, nivel
+            clave, valor = m.group(1).lower(), m.group(2).strip()
+            if clave == "nivel":
+                if re.fullmatch(r"[1-5]", valor):
+                    datos["nivel"] = int(valor)
+            else:
+                datos[clave] = valor
+        elif linea and not datos["fuente"]:
+            datos["fuente"] = linea
+    return datos
 
 
 def titulo_desde_carpeta(nombre):
@@ -131,7 +137,10 @@ def cancion_partitura(carpeta, instrumento):
             compositor = m.group(1).strip()
     if not (xml or principal):
         return None
-    fuente, nivel = leer_fuente(carpeta)
+    datos = leer_fuente(carpeta)
+    fuente, nivel = datos["fuente"], datos["nivel"]
+    titulo = datos["titulo"] or titulo
+    compositor = datos["subtitulo"] or compositor
     return {
         "id": f"{instrumento}/{carpeta.name}",
         "instrumento": instrumento,

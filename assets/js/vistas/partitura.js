@@ -29,6 +29,7 @@ export async function mostrar(main, [instrumento, carpeta]) {
   if (!c) throw new Error(`No encontré «${carpeta}».`);
   const timbre = instrumento === "piano" ? "piano" : instrumento === "violin" ? "violin" : "armonica";
   const esPiano = instrumento === "piano";
+  const soloPdf = !c.musicxml && Boolean(c.pdf); // partituras que solo tienen PDF: se muestran incrustadas
   const progreso = progresoDe(c.id);
 
   main.innerHTML = `
@@ -47,7 +48,8 @@ export async function mostrar(main, [instrumento, carpeta]) {
     </header>
     <div class="pestanas" role="tablist">
       ${c.musicxml ? '<button role="tab" type="button" data-p="partitura" aria-selected="true">Partitura</button>' : ""}
-      ${c.notas ? `<button role="tab" type="button" data-p="analisis" aria-selected="${!c.musicxml}">${esPiano ? "Análisis y plan" : "Cómo estudiarla"}</button>` : ""}
+      ${soloPdf ? '<button role="tab" type="button" data-p="pdf" aria-selected="true">Partitura</button>' : ""}
+      ${c.notas ? `<button role="tab" type="button" data-p="analisis" aria-selected="${!c.musicxml && !soloPdf}">${esPiano ? "Análisis y plan" : "Cómo estudiarla"}</button>` : ""}
       ${c.extras?.length ? '<button role="tab" type="button" data-p="archivos" aria-selected="false">Archivos</button>' : ""}
     </div>
     <section data-panel="partitura" ${c.musicxml ? "" : "hidden"}>
@@ -79,7 +81,13 @@ export async function mostrar(main, [instrumento, carpeta]) {
       <div class="partitura" id="osmd"><p class="cargando">Cargando partitura…</p></div>
       <div class="globo-nota" role="tooltip" hidden></div>
     </section>
-    <section data-panel="analisis" class="prosa" ${c.musicxml ? "hidden" : ""}><p class="cargando">Cargando…</p></section>
+    ${soloPdf ? `<section data-panel="pdf">
+      <p class="nota-texto">Partitura en PDF. Si no se ve aquí (en algunos celulares), ábrela con el botón <b>PDF</b> de arriba.</p>
+      <object class="visor-pdf" data="${esc(c.pdf)}#view=FitH" type="application/pdf" aria-label="Partitura en PDF de ${esc(c.titulo)}">
+        <p><a class="btn" href="${esc(c.pdf)}" target="_blank" rel="noopener">${icono("pdf")}Abrir la partitura (PDF)</a></p>
+      </object>
+    </section>` : ""}
+    <section data-panel="analisis" class="prosa" ${c.musicxml || soloPdf ? "hidden" : ""}><p class="cargando">Cargando…</p></section>
     <section data-panel="archivos" hidden>
       <ul class="lista-archivos">${(c.extras || []).map((p) => `<li><a href="${esc(p)}" target="_blank" rel="noopener">${icono("pdf")}${esc(p.split("/").pop())}</a></li>`).join("")}</ul>
     </section>`;
