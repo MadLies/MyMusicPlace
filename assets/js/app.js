@@ -25,6 +25,7 @@ const rutas = [
   { re: /^\/notas(?:\/(armonica|violin))?$/, vista: () => import("./vistas/notas.js"), nav: "notas" },
   { re: /^\/teoria(?:\/([a-z]+))?\/?$/, vista: () => import("./vistas/teoria.js"), nav: "teoria" },
   { re: /^\/editor$/, vista: () => import("./vistas/editor.js"), nav: "editor" },
+  { re: /^\/midi$/, vista: () => import("./vistas/midi.js"), nav: "midi" },
   { re: /^\/fuentes$/, vista: () => import("./vistas/fuentes.js"), nav: "fuentes" },
 ];
 

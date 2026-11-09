@@ -25,6 +25,14 @@ Partituras de piano y violín y tablaturas de armónica, organizadas por instrum
   - *Armonía*: los acordes de cada tonalidad (tríadas o con 7ª) con su número romano y su función
     (tónica, subdominante, dominante), progresiones típicas para escuchar, dominantes secundarias
     (V7/ii, V7/V…), préstamo modal, napolitano, sustituto tritonal y el círculo de quintas.
+- **Editor MIDI**: piano roll (lápiz y selección, rejilla con tresillos, zoom), varias pistas con
+  instrumento General MIDI, canal, volumen, pan, mute y solo; carriles de velocidad, pitch bend,
+  volumen, pan, expresión, pedal y modulación; tempo y compás; deshacer, copiar/pegar, duplicar,
+  transponer y cuantizar. Abre y descarga archivos .mid, exporta audio .wav e importa las partituras y
+  tablaturas de la biblioteca (con su fuente guardada dentro del .mid). Para aprender MIDI: lista de
+  eventos con sus bytes, visor de los bytes del archivo, lecciones, constructor de mensajes y monitor.
+  Graba desde un teclado MIDI (Web MIDI), el teclado del PC o el de la pantalla, y puede mandar las
+  notas a un sintetizador externo.
 - **Afinador** con tres modos:
   - *Cromático*: cualquier instrumento o la voz (≈50 Hz–3 kHz), La4 de referencia ajustable,
     transposición para instrumentos en Si♭/Mi♭/Fa y notas de referencia (cortas o sostenidas).

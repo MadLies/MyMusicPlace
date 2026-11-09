@@ -17,6 +17,16 @@ const P = {
   imprimir: '<path d="M7 9V3h10v6M7 17H5a2 2 0 01-2-2v-4a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2h-2"/><rect x="7" y="14" width="10" height="7"/>',
   mas: '<path d="M12 5v14M5 12h14"/>',
   menos: '<path d="M5 12h14"/>',
+  grabar: '<circle cx="12" cy="12" r="6.5" fill="currentColor" stroke="none"/>',
+  inicio: '<path d="M6 5v14M18 5l-9 7 9 7z" fill="currentColor"/>',
+  avanzar: '<path d="M18 5v14M6 5l9 7-9 7z" fill="currentColor"/>',
+  lapiz: '<path d="M4 20l1-5L15.5 4.5a2.1 2.1 0 013 3L8 18z"/><path d="M13.5 6.5l3 3"/>',
+  seleccion: '<path d="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3"/>',
+  metronomo: '<path d="M9 3h6l4 18H5z"/><path d="M12 15l5-8"/>',
+  deshacer: '<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/>',
+  rehacer: '<path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 000 11H13"/>',
+  teclado: '<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>',
+  cable: '<path d="M7 3v5M17 3v5M5 8h14v3a7 7 0 01-14 0zM12 18v3"/>',
   ojo: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
 };
 
