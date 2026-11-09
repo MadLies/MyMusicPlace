@@ -18,11 +18,16 @@ const lista = (ns) => ns.map(nombre).join(" · ");
 
 export async function mostrar(main, [pestanaRuta]) {
   let pestana = pestanaRuta || pref("teoriaPestana", "escalas");
+  // Atajos: #/teoria/violin o #/teoria/piano abren las escalas en ese instrumento.
+  let instrRuta = null;
+  if (["violin", "piano"].includes(pestana)) { instrRuta = pestana; pestana = "escalas"; }
+  if (!["escalas", "armonia"].includes(pestana)) pestana = "escalas";
   let p = Number(pref("teoriaTonica", 0));
   let tipo = pref("teoriaTipo", "mayor");
   if (!ESCALAS[tipo]) tipo = "mayor";
   let etiquetas = pref("teoriaEtiquetas", "nombres");
-  let instr = pref("teoriaInstrumento", "piano"); // piano | violin | ambos
+  let instr = instrRuta || pref("teoriaInstrumento", "piano"); // piano | violin | ambos
+  if (instrRuta) setPref("teoriaInstrumento", instr);
   let violinAlto = pref("teoriaViolinAlto", false);
   let modo = pref("armoniaModo", "mayor");
   let septimas = pref("armoniaSeptimas", false);

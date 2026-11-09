@@ -23,7 +23,7 @@ const rutas = [
   { re: /^\/afinador(?:\/(cromatico|armonica|violin))?$/, vista: () => import("./vistas/afinador.js"), nav: "afinador" },
   { re: /^\/metronomo$/, vista: () => import("./vistas/metronomo.js"), nav: "metronomo" },
   { re: /^\/notas(?:\/(armonica|violin))?$/, vista: () => import("./vistas/notas.js"), nav: "notas" },
-  { re: /^\/teoria(?:\/(escalas|armonia))?$/, vista: () => import("./vistas/teoria.js"), nav: "teoria" },
+  { re: /^\/teoria(?:\/([a-z]+))?\/?$/, vista: () => import("./vistas/teoria.js"), nav: "teoria" },
   { re: /^\/editor$/, vista: () => import("./vistas/editor.js"), nav: "editor" },
   { re: /^\/fuentes$/, vista: () => import("./vistas/fuentes.js"), nav: "fuentes" },
 ];
@@ -44,7 +44,7 @@ async function navegar() {
   vista.className = "vista";
   main.replaceChildren(vista);
   if (!r) {
-    vista.innerHTML = `<div class="vacio"><h1>No encontré esta página</h1><p><a href="#/">Volver a la biblioteca</a></p></div>`;
+    vista.innerHTML = `<div class="vacio"><h1>No encontré esta página</h1><p>Si la web se actualizó hace poco, recarga con <b>Ctrl+Shift+R</b> (en el celular, cierra y vuelve a abrir la pestaña).</p><p><a href="#/">Volver a la biblioteca</a></p></div>`;
     return;
   }
   vista.innerHTML = '<p class="cargando">Cargando…</p>';

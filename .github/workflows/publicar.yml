@@ -30,6 +30,8 @@ jobs:
           python-version: "3.12"
       - name: Generar índice de canciones
         run: python3 herramientas/generar_indice.py
+      - name: Versionar archivos (que el navegador no use copias viejas)
+        run: python3 herramientas/versionar.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
