@@ -245,6 +245,11 @@ select, input[type="search"], textarea { font: inherit; color: var(--text); back
 .globo-nota b { font-size: 1.1rem; }
 .globo-nota span { opacity: .7; margin-left: 4px; }
 .globo-nota small { display: block; opacity: .75; margin-top: 4px; font-size: .78rem; }
+.arco-sim { width: .8em; height: .95em; vertical-align: -.1em; }
+.globo-nota .globo-arco { opacity: 1; margin: 0; }
+.globo-nota small b { font-size: inherit; }
+.leyenda-arco { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; margin: 8px 0 0; font-size: .88rem; color: var(--muted); }
+.leyenda-arco b { color: var(--text); }
 .prosa { max-width: 760px; }
 .prosa table { border-collapse: collapse; width: 100%; font-size: .92rem; margin: 12px 0; display: block; overflow-x: auto; }
 .prosa th, .prosa td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }

@@ -12,6 +12,8 @@ Partituras de piano y violín y tablaturas de armónica, organizadas por instrum
 - **Ritmo**: las tablaturas pueden llevar duraciones (`6:2`, `-7:1.5`, `7:1/2`) y `tempo:`/`compas:`;
   *Escuchar* sigue el ritmo real, con metrónomo y cuenta de entrada opcionales.
 - **Tocar con micrófono**: tú tocas y la tablatura (o la partitura de violín) avanza cuando oye la nota correcta.
+- **Arcadas de violín**: las partituras muestran ⊓ (arco abajo, *jalar*) y V (arco arriba, *empujar*), escritos
+  en el MusicXML como `<down-bow/>` / `<up-bow/>`; al pasar el mouse por una nota se ve su arcada y su dedo.
 - **Metrónomo**: marcar el tempo con toques, compases, subdivisiones, entrenador de velocidad y compases mudos.
 - **Notas en los instrumentos**: mapa de la armónica (con todos los bends, según su tono) y diapasón
   del violín con el dedo de cada posición; resalta escalas, y con el micrófono se enciende el círculo
@@ -68,7 +70,8 @@ Partituras/
 │   └── NoviembreSinTi/
 ├── Violin/
 │   ├── _Plantillas/             Violin_en_blanco.mscz / .musicxml (1 pauta, clave de sol)
-│   └── 01_CuerdasAlAire … 06_HimnoALaAlegria   6 piezas para empezar (con dedos y nombres de notas)
+│   ├── 01_CuerdasAlAire … 06_HimnoALaAlegria   6 piezas para empezar (con dedos y nombres de notas)
+│   └── 07_OdeToJoy/             versión completa de madlies, con arcadas
 └── Armonica/
     ├── _Plantillas/             Tablatura_en_blanco.tab + tab2pdf.py (tablaturas → PDF)
     ├── Flaca/

@@ -12,6 +12,25 @@ import { fuenteHTML } from "./fuentes.js";
 const OSMD_URL = "https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.8.9/build/opensheetmusicdisplay.min.js";
 const MARKED_URL = "https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js";
 
+// Arcadas del violín: ⊓ = arco abajo (jalar, del talón a la punta); V = arco arriba (empujar, de la punta al talón).
+const ARCOS = {
+  abajo: { verbo: "jalar", nombre: "arco abajo", svg: '<svg class="arco-sim" viewBox="0 0 12 14" aria-hidden="true"><path d="M2 13V2.5h8V13" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2 2.5h8" stroke="currentColor" stroke-width="3.2"/></svg>' },
+  arriba: { verbo: "empujar", nombre: "arco arriba", svg: '<svg class="arco-sim" viewBox="0 0 12 14" aria-hidden="true"><path d="M2 1.5 6 13l4-11.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>' },
+};
+const arcoHTML = (a) => `${ARCOS[a].svg} <b>${ARCOS[a].verbo}</b> (${ARCOS[a].nombre})`;
+
+// Arcada y dedo escritos en la partitura para una nota de OSMD.
+function marcasDe(n) {
+  const AE = window.opensheetmusicdisplay?.ArticulationEnum || {};
+  let arco = null;
+  for (const a of n.ParentVoiceEntry?.Articulations || []) {
+    if (a.articulationEnum === AE.downbow) arco = "abajo";
+    if (a.articulationEnum === AE.upbow) arco = "arriba";
+  }
+  const dedo = n.Fingering?.value ?? null;
+  return { arco, dedo: dedo === null || dedo === "" ? null : String(dedo) };
+}
+
 function cargarScript(url) {
   if (document.querySelector(`script[src="${url}"]`)) return Promise.resolve();
   return new Promise((ok, mal) => {
@@ -75,6 +94,7 @@ export async function mostrar(main, [instrumento, carpeta]) {
           <label class="interruptor"><input type="checkbox" data-accion="metro"> Metrónomo</label>
           <label class="interruptor" title="Un compás de clics antes de empezar"><input type="checkbox" data-accion="cuenta" ${pref("cuentaEntrada", false) ? "checked" : ""}> Cuenta de entrada</label>
         </div>
+        <p class="leyenda-arco" hidden>Arcadas: <span>${arcoHTML("abajo")}: del talón a la punta</span> <span>${arcoHTML("arriba")}: de la punta al talón</span></p>
         <div class="estado-mic" hidden></div>
         <p class="nota-texto">Pasa el mouse sobre una nota para ver cuál es; haz clic en ella para oírla. Haz clic en un espacio vacío de un compás para empezar desde ahí.${esPiano ? " La reproducción lee la partitura de corrido (sin hacer las repeticiones) para que sigas el cursor fácilmente." : " Con «Tocar con micrófono», la partitura espera a que toques cada nota."}</p>
       </div>
@@ -143,6 +163,7 @@ export async function mostrar(main, [instrumento, carpeta]) {
       $('[data-accion="tempo"]').nextElementSibling.textContent = tempo;
     }
     pulsosCompas = osmd.Sheet?.SourceMeasures?.[0]?.ActiveTimeSignature?.Numerator || 4;
+    $(".leyenda-arco").hidden = !eventos.some((ev) => ev.notas.some((n) => n.arco));
   } catch (err) {
     $("#osmd").innerHTML = `<p class="aviso">No pude mostrar la partitura: ${esc(err.message)}</p>`;
     return;
@@ -165,7 +186,7 @@ export async function mostrar(main, [instrumento, carpeta]) {
           try { el = gn.getSVGGElement(); } catch { /* sin SVG */ }
           if (!el) continue;
           const lista = mapaNotas.get(el) || [];
-          lista.push({ midi: n.halfTone + 12, dur: n.Length.RealValue, pentagrama });
+          lista.push({ midi: n.halfTone + 12, dur: n.Length.RealValue, pentagrama, ...marcasDe(n) });
           mapaNotas.set(el, lista);
         }
       });
@@ -187,7 +208,9 @@ export async function mostrar(main, [instrumento, carpeta]) {
     figura.classList.add("nota-encima");
     const nombres = notas.map((n) => `<b>${nombreNota(n.midi)}${octava(n.midi)}</b> <span>${CIFRADO[n.midi % 12]}${octava(n.midi)}</span>`).join("<br>");
     const d = DURACIONES[Math.round(notas[0].dur * 100000) / 100000];
-    globo.innerHTML = `${nombres}<small>${[notas.length > 1 ? `acorde de ${notas.length} notas` : "", d, MANOS[notas[0].pentagrama] || ""].filter(Boolean).join(" · ")}</small>`;
+    const marcas = notas.find((n) => n.arco || n.dedo) || {};
+    const extra = [marcas.arco ? `<span class="globo-arco">${arcoHTML(marcas.arco)}</span>` : "", marcas.dedo ? `dedo ${esc(marcas.dedo)}` : ""].filter(Boolean).join(" · ");
+    globo.innerHTML = `${nombres}<small>${[notas.length > 1 ? `acorde de ${notas.length} notas` : "", d, esPiano ? MANOS[notas[0].pentagrama] || "" : ""].filter(Boolean).join(" · ")}</small>${extra ? `<small>${extra}</small>` : ""}`;
     globo.hidden = false;
     const r = globo.getBoundingClientRect();
     globo.style.left = `${Math.min(innerWidth - r.width - 8, Math.max(8, x + 14))}px`;
@@ -217,7 +240,7 @@ export async function mostrar(main, [instrumento, carpeta]) {
         for (const n of ve.Notes) {
           if (n.isRest() || n.halfTone === undefined) continue;
           if (n.NoteTie && n.NoteTie.StartNote !== n) continue; // no repetir notas ligadas
-          notas.push({ midi: n.halfTone + 12, dur: n.Length.RealValue, pentagrama });
+          notas.push({ midi: n.halfTone + 12, dur: n.Length.RealValue, pentagrama, ...marcasDe(n) });
         }
       }
       lista.push({ t: it.currentTimeStamp.RealValue, notas, compas: it.CurrentMeasureIndex });
@@ -279,9 +302,10 @@ export async function mostrar(main, [instrumento, carpeta]) {
   const estadoMic = $(".estado-mic");
   const conNotas = (i) => { while (i < eventos.length && !eventos[i].notas.length) i++; return i < eventos.length ? i : null; };
   const notaMeta = (i) => Math.max(...eventos[i].notas.map((n) => n.midi));
-  const describir = (m) => {
+  const describir = (m, i = null) => {
     const pv = instrumento === "violin" ? posicionViolin(m) : null;
-    return `<b>${nombreNota(m)}${octava(m)}</b>${pv ? ` (${pv.texto})` : ""}`;
+    const nota = i === null ? null : eventos[i].notas.find((n) => n.midi === m);
+    return `<b>${nombreNota(m)}${octava(m)}</b>${pv ? ` (${pv.texto})` : ""}${nota?.arco ? ` · ${arcoHTML(nota.arco)}` : ""}`;
   };
   function fijarObjetivo(i) {
     objetivo = i;
@@ -290,7 +314,7 @@ export async function mostrar(main, [instrumento, carpeta]) {
       return;
     }
     irA(i);
-    estadoMic.innerHTML = `${icono("mic")} Toca ${describir(notaMeta(i))} · aciertos: ${aciertos}`;
+    estadoMic.innerHTML = `${icono("mic")} Toca ${describir(notaMeta(i), i)} · aciertos: ${aciertos}`;
   }
   function alOir({ frec, rms }) {
     if (objetivo === null) return;
@@ -300,7 +324,7 @@ export async function mostrar(main, [instrumento, carpeta]) {
     const r = Math.round(m);
     const cents = Math.round((m - meta) * 100);
     const coincide = r === meta;
-    estadoMic.innerHTML = `${icono("mic")} Toca ${describir(meta)} · oigo <b class="${coincide ? "ok" : "mal"}">${nombreNota(r)}${octava(r)}</b>${coincide ? ` <small>${cents > 0 ? "+" : ""}${cents}¢</small>` : ""} · aciertos: ${aciertos}`;
+    estadoMic.innerHTML = `${icono("mic")} Toca ${describir(meta, objetivo)} · oigo <b class="${coincide ? "ok" : "mal"}">${nombreNota(r)}${octava(r)}</b>${coincide ? ` <small>${cents > 0 ? "+" : ""}${cents}¢</small>` : ""} · aciertos: ${aciertos}`;
     if (esperarSoltar) { if (!coincide || rms < pico * 0.45) esperarSoltar = false; return; }
     pico = Math.max(pico * 0.97, rms);
     estable = coincide && Math.abs(cents) < 40 ? estable + 1 : 0;

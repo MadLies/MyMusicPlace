@@ -1,5 +1,5 @@
 {
-  "generado": "2026-11-09T22:56:42+00:00",
+  "generado": "2026-11-10T15:12:32+00:00",
   "canciones": [
     {
       "id": "armonica/Flaca",
@@ -300,6 +300,22 @@
       "mscz": "Violin/06_HimnoALaAlegria/02_editable/06_HimnoALaAlegria.mscz",
       "notas": "Violin/06_HimnoALaAlegria/Como_estudiarla.md",
       "fuente": "Melodía de Ludwig van Beethoven (1824, dominio público); versión para violín principiante preparada por madlies",
+      "stats": {
+        "nivel": 2
+      },
+      "extras": []
+    },
+    {
+      "id": "violin/07_OdeToJoy",
+      "instrumento": "violin",
+      "carpeta": "07_OdeToJoy",
+      "titulo": "Ode to Joy",
+      "subtitulo": "Ludwig van Beethoven · versión para violín de madlies",
+      "musicxml": "Violin/07_OdeToJoy/03_exportados/musicxml/07_OdeToJoy.musicxml",
+      "pdf": "Violin/07_OdeToJoy/03_exportados/pdf/07_OdeToJoy.pdf",
+      "mscz": "Violin/07_OdeToJoy/02_editable/07_OdeToJoy.mscz",
+      "notas": "Violin/07_OdeToJoy/Como_estudiarla.md",
+      "fuente": "Melodía de Ludwig van Beethoven (1824, dominio público); versión para violín escrita por madlies, con arcadas y digitación",
       "stats": {
         "nivel": 2
       },
