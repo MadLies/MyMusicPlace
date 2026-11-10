@@ -1,6 +1,7 @@
 // Enrutador y arranque de la web.
 import { icono } from "./iconos.js";
 import { setPref } from "./progreso.js";
+import "./temporizador.js"; // temporizador de práctica en la cabecera
 
 const main = document.getElementById("contenido");
 let limpiezaActual = null;

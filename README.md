@@ -25,6 +25,9 @@ Partituras de piano y violín y tablaturas de armónica, organizadas por instrum
   - *Armonía*: los acordes de cada tonalidad (tríadas o con 7ª) con su número romano y su función
     (tónica, subdominante, dominante), progresiones típicas para escuchar, dominantes secundarias
     (V7/ii, V7/V…), préstamo modal, napolitano, sustituto tritonal y el círculo de quintas.
+- **Temporizador de práctica** (botón con flecha en la cabecera, en todas las páginas): 20, 30, 45 min,
+  1 h o la duración que quieras; pausa, +5 min y aviso al terminar con campana, el título de la pestaña
+  y, si lo permites, una notificación del sistema. Sigue contando aunque cambies de página o recargues.
 - **Editor MIDI**: piano roll (lápiz y selección, rejilla con tresillos, zoom), varias pistas con
   instrumento General MIDI, canal, volumen, pan, mute y solo; carriles de velocidad, pitch bend,
   volumen, pan, expresión, pedal y modulación; tempo y compás; deshacer, copiar/pegar, duplicar,

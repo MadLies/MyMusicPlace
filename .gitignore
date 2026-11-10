@@ -10,3 +10,4 @@ __pycache__/
 # Herramientas locales
 .playwright-mcp/
 .DS_Store
+.wrangler/

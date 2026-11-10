@@ -17,6 +17,7 @@ const P = {
   imprimir: '<path d="M7 9V3h10v6M7 17H5a2 2 0 01-2-2v-4a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2h-2"/><rect x="7" y="14" width="10" height="7"/>',
   mas: '<path d="M12 5v14M5 12h14"/>',
   menos: '<path d="M5 12h14"/>',
+  reloj: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5M12 2.5V5"/>',
   grabar: '<circle cx="12" cy="12" r="6.5" fill="currentColor" stroke="none"/>',
   inicio: '<path d="M6 5v14M18 5l-9 7 9 7z" fill="currentColor"/>',
   avanzar: '<path d="M18 5v14M6 5l9 7-9 7z" fill="currentColor"/>',

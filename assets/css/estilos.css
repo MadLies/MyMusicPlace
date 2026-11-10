@@ -879,3 +879,49 @@ code.b-dat { background: color-mix(in srgb, var(--accent) 22%, transparent); pad
 }
 .rollo-estado { font-size: .82rem; color: var(--muted); padding: 4px 4px 0; min-height: 1.6em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .visor-pdf { display: block; width: 100%; height: min(88vh, 1100px); border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
+
+/* ---------- Temporizador de práctica (cabecera) ---------- */
+.temporizador { position: relative; flex: none; }
+.tempo-btn { display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 8px 0 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--muted); font: inherit; font-size: .9rem; cursor: pointer; }
+.tempo-btn:hover { color: var(--text); border-color: var(--muted); }
+.tempo-btn .ico { width: 18px; height: 18px; }
+.tempo-btn .tempo-flecha { width: 14px; height: 14px; transition: transform .15s; }
+.tempo-btn[aria-expanded="true"] .tempo-flecha { transform: rotate(180deg); }
+.tempo-txt { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 600; }
+.tempo-txt:empty { display: none; }
+.tempo-btn.activo { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.tempo-btn.pausado { color: var(--text); border-style: dashed; }
+.tempo-btn.terminado { color: #fff; background: #e5484d; border-color: #e5484d; animation: tempo-latido 1.2s ease-in-out infinite; }
+@keyframes tempo-latido { 50% { box-shadow: 0 0 0 5px rgba(229, 72, 77, .25); } }
+@media (prefers-reduced-motion: reduce) { .tempo-btn.terminado { animation: none; } }
+.tempo-menu { position: absolute; right: 0; top: calc(100% + 8px); z-index: 40; width: 280px; max-width: calc(100vw - 24px); padding: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 32px rgba(0, 0, 0, .18); }
+.tempo-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.tempo-estado { font-size: .8rem; color: var(--muted); }
+.tempo-ayuda { margin: 0 0 10px; font-size: .85rem; color: var(--muted); }
+.tempo-presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+.tempo-chip { font: inherit; font-size: .88rem; font-weight: 600; padding: 9px 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); color: var(--text); cursor: pointer; }
+.tempo-chip:hover, .tempo-chip:focus-visible { border-color: var(--accent); color: var(--accent); }
+.tempo-otro { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: .88rem; color: var(--muted); }
+.tempo-otro input { width: 64px; font: inherit; padding: 5px 7px; margin: 0 4px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--text); }
+.tempo-notif { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: .8rem; color: var(--muted); cursor: pointer; }
+.tempo-notif input { accent-color: var(--accent); }
+.tempo-grande { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 2.2rem; font-weight: 700; text-align: center; letter-spacing: .02em; margin: 2px 0 8px; }
+.tempo-barra { height: 6px; border-radius: 99px; background: var(--surface-2); overflow: hidden; margin-bottom: 8px; }
+.tempo-barra i { display: block; height: 100%; background: var(--accent); border-radius: inherit; transition: width .9s linear; }
+.tempo-menu .tempo-ayuda:has(+ .tempo-acciones) { text-align: center; }
+.tempo-acciones { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+.tempo-acciones .btn-mini { display: inline-flex; align-items: center; gap: 4px; }
+.tempo-acciones .ico { width: 13px; height: 13px; }
+.tempo-acciones .primario { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.tempo-fin { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.tempo-fin-ico { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--ok-bg); color: var(--ok); flex: none; }
+.tempo-fin-ico .ico { width: 20px; height: 20px; }
+.tempo-fin small { display: block; color: var(--muted); font-size: .82rem; }
+@media (max-width: 640px) {
+  .barra-sup-in { gap: 8px; }
+  .nav { min-width: 0; }
+  .tempo-btn { padding: 0 7px; gap: 3px; font-size: .8rem; }
+  .tempo-btn .tempo-flecha { display: none; }
+  .tempo-menu { position: fixed; right: 12px; top: 64px; }
+}
+.barra-sup-in > .btn-icono { flex: none; }
