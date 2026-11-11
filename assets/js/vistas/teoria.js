@@ -341,24 +341,59 @@ export async function mostrar(main, [pestanaRuta]) {
   // ================================================================ ARMONÍA
   let registro = new Map(); // id → { acorde, ... } de cada acorde que se puede tocar
   let elegido = null;
+  let inversion = 0; // 0 = estado fundamental; 1, 2 (y 3 con 7ª) = qué nota del acorde va en el bajo
 
-  function voces(a) {
+  /** Orden de las notas del acorde de abajo arriba en una inversión (índices de a.notas). */
+  const ordenInv = (a, inv = 0) => a.notas.map((_, i) => (i + inv) % a.notas.length);
+  /** Teclas (MIDI) del acorde en una inversión: el bajo en la octava de Do3 y el resto encima. */
+  function voces(a, inv = 0) {
     let prev = 0;
-    return a.notas.map((n, i) => {
-      let m = 48 + pc(n);
+    return ordenInv(a, inv).map((k, i) => {
+      let m = 48 + pc(a.notas[k]);
       if (i > 0) while (m <= prev) m += 12;
       prev = m;
       return m;
     });
   }
-  function tocarAcorde(a, dur = 1.1) {
-    const vs = voces(a);
+  function tocarAcorde(a, dur = 1.1, inv = 0) {
+    const vs = voces(a, inv);
     vs.forEach((m) => nota(m, dur, 0.15));
     tocarNota(frecuencia(vs[0] - 12), dur, { timbre: "piano", volumen: 0.12 });
   }
-  function arpegio(a) {
-    voces(a).forEach((m, i) => despues(i * 170, () => nota(m, 0.7, 0.2)));
+  function arpegio(a, inv = 0) {
+    voces(a, inv).forEach((m, i) => despues(i * 170, () => nota(m, 0.7, 0.2)));
   }
+
+  // Inversiones: nombre, cifrado del bajo continuo y para qué se usan.
+  const INV_NOMBRE = ["Fundamental", "1ª inversión", "2ª inversión", "3ª inversión"];
+  const INV_FIG = { 3: ["", "6", "6/4"], 4: ["7", "6/5", "4/3", "4/2"] };
+  const INV_ALIAS = { 3: ["", "acorde de sexta", "acorde de cuarta y sexta"], 4: ["", "quinta y sexta", "tercera y cuarta", "segunda"] };
+  const INV_PAPEL = ["la raíz", "la 3ª", "la 5ª", "la 7ª"];
+  const INV_USO = {
+    3: [
+      "Es la posición más estable y la que suena más «firme»: la que se usa para empezar y para terminar.",
+      "Suena más ligera que la fundamental. Sirve para que el bajo camine por grados en vez de saltar (por ejemplo I – I6 – IV).",
+      "Es inestable: casi siempre va de paso o justo antes de la dominante en la cadencia (I6/4 → V → I).",
+    ],
+    4: [
+      "La forma «de libro» del acorde con séptima.",
+      "Suena más suave que la fundamental y deja el bajo a un paso de la nota siguiente.",
+      "Casi siempre va de paso, con el bajo moviéndose por grados.",
+      "La séptima está en el bajo y tiende a bajar un grado, así que el bajo baja.",
+    ],
+  };
+  // En el acorde de dominante (7) las inversiones tienen usos típicos.
+  const INV_DOMINANTE = ["", "En la dominante, el bajo es la sensible y sube a la tónica (V6/5 → I).",
+    "En la dominante, va de paso entre dos posiciones de la tónica (I – V4/3 – I6).",
+    "En la dominante, resuelve en la tónica en 1ª inversión (V4/2 → I6)."];
+  function romanoInv(a, inv) {
+    const fig = (INV_FIG[a.notas.length] || [])[inv] || "";
+    if (!inv) return a.romano;
+    const [base, ...resto] = a.romano.split("/");
+    const sin7 = base.replace(/\(?maj7\)?$|7$/, ""); // la cifra de la inversión ya dice que lleva 7ª
+    return [`${sin7}${fig}`, ...resto].join("/");
+  }
+  const cifradoInv = (a, inv) => (inv ? `${a.cifrado}/${cifra(a.notas[ordenInv(a, inv)[0]])}` : a.cifrado);
 
   function tarjeta(id, a, { numero, arriba, abajo, clase = "" }) {
     return `<button type="button" class="acorde ${clase}" data-acorde="${id}">
@@ -432,6 +467,7 @@ export async function mostrar(main, [pestanaRuta]) {
         <button type="button" class="btn-icono av-plegar" data-accion="plegar" aria-label="Plegar el panel" title="Plegar">▾</button>
       </div>
       <div class="av-notas">${chips}</div>
+      ${bloqueInversiones(a)}
       <div class="av-texto">${cuerpoTxt}</div>
       <div class="av-acciones">
         <button type="button" class="btn-mini" data-accion="sel-tocar">${icono("play")} Acorde</button>
@@ -441,21 +477,44 @@ export async function mostrar(main, [pestanaRuta]) {
       </div>`;
   }
 
-  function mostrarAcorde(id, { tocar = true } = {}) {
+  function bloqueInversiones(a) {
+    const n = a.notas.length;
+    const inv = Math.min(inversion, n - 1);
+    const orden = ordenInv(a, inv);
+    const fig = INV_FIG[n]?.[inv] || "", alias = INV_ALIAS[n]?.[inv] || "";
+    return `<div class="av-inv">
+        <div class="av-inv-cab"><b>Inversiones</b> <small>qué nota del acorde va en el bajo</small></div>
+        <div class="segmentos inv-opciones" role="group" aria-label="Inversión">
+          ${Array.from({ length: n }, (_, k) => `<button type="button" data-inv="${k}" aria-pressed="${k === inv}">
+            <span>${k ? `${k}ª` : "Fund."}</span><b>${cifradoInv(a, k)}</b></button>`).join("")}
+        </div>
+        <p class="inv-txt"><b>${INV_NOMBRE[inv]}</b>${fig ? ` · cifrado <b>${fig}</b>${alias ? ` (${alias})` : ""}` : ""} · <span class="inv-rom">${romanoInv(a, inv)}</span><br>
+          De abajo arriba: ${orden.map((k, i) => (i === 0 ? `<b class="inv-bajo">${nombre(a.notas[k])}</b>` : nombre(a.notas[k]))).join(" – ")}.
+          ${inv ? `${INV_PAPEL[inv][0].toUpperCase()}${INV_PAPEL[inv].slice(1)} (${nombre(a.notas[inv])}) va en el bajo; las notas son las mismas que en la fundamental, solo cambia el orden.` : `La raíz (${nombre(a.notas[0])}) va en el bajo.`}
+          ${INV_USO[n]?.[inv] || ""} ${a.cal?.cif === "7" ? INV_DOMINANTE[inv] : ""}</p>
+        <button type="button" class="btn-mini" data-accion="sel-inversiones" data-reproduce data-etq="Escuchar las ${n} posiciones">${icono("play")}<span>Escuchar las ${n} posiciones</span></button>
+      </div>`;
+  }
+
+  function mostrarAcorde(id, { tocar = true, inv = 0 } = {}) {
     const r = registro.get(id);
     if (!r) return;
+    inversion = Math.min(inv, r.acorde.notas.length - 1);
     elegido = id;
     main.querySelectorAll(".acorde.elegido, .pa.elegido").forEach((x) => x.classList.remove("elegido"));
     main.querySelectorAll(`[data-acorde="${id}"]`).forEach((x) => x.classList.add("elegido"));
     const a = r.acorde, c = r.clave;
-    const vs = voces(a);
+    const vs = voces(a, inversion), orden = ordenInv(a, inversion);
     const extra = notasExtranas(c, a).map(pc);
     const marcas = new Map();
     for (let m = 48; m <= 71; m++) if (c.pcs.has(mod12(m))) marcas.set(m, { tipo: "tenue" });
-    vs.forEach((m, i) => marcas.set(m, { tipo: extra.includes(mod12(m)) ? "fuera" : i === 0 ? "tonica" : "escala", texto: a.intervalos[i] }));
+    vs.forEach((m, i) => {
+      const k = orden[i]; // qué nota del acorde es (0 = raíz)
+      marcas.set(m, { tipo: extra.includes(mod12(m)) ? "fuera" : k === 0 ? "tonica" : "escala", texto: a.intervalos[k], sub: i === 0 && inversion ? "bajo" : undefined });
+    });
     const vista = $("#acorde-vista");
-    vista.innerHTML = `<div class="teclado-principal">${tecladoSVG({ desde: 48, hasta: 71, marcas, grande: true, titulo: `Acorde ${a.cifrado}: ${a.notas.map(nombre).join(", ")}` })}</div>${textoDetalle(r)}`;
-    if (tocar) tocarAcorde(a);
+    vista.innerHTML = `<div class="teclado-principal">${tecladoSVG({ desde: 48, hasta: 71, marcas, grande: true, titulo: `Acorde ${cifradoInv(a, inversion)}: ${orden.map((k) => nombre(a.notas[k])).join(", ")}` })}</div>${textoDetalle(r)}`;
+    if (tocar) tocarAcorde(a, 1.1, inversion);
   }
 
   function pintarArmonia() {
@@ -579,6 +638,7 @@ export async function mostrar(main, [pestanaRuta]) {
       <details><summary>Cómo se forman los acordes de una tonalidad</summary><p>Se toma una nota de la escala y se apilan terceras: una sí, otra no. Desde ${n(0)}: ${n(0)}–${n(2)}–${n(4)}. Con una tercera más se añade la 7ª (${n(6)}). Como la escala tiene tonos y semitonos en sitios distintos, unos acordes salen mayores, otros menores y uno disminuido.</p></details>
       <details><summary>Números romanos</summary><p>El número es el grado de la escala sobre el que se construye el acorde. <b>Mayúscula</b> = acorde mayor (V), <b>minúscula</b> = menor (ii), <b>°</b> = disminuido (vii°), <b>+</b> = aumentado, <b>ø</b> = semidisminuido (m7♭5), <b>7</b> = lleva séptima, <b>♭</b>/<b>♯</b> delante = la raíz está alterada respecto a la escala (♭VII). Así una progresión se puede tocar en cualquier tonalidad.</p></details>
       <details><summary>Tipos de acorde</summary><ul><li><b>Mayor</b>: 3ª mayor + 3ª menor (4 + 3 semitonos). Estable, luminoso.</li><li><b>Menor</b>: 3ª menor + 3ª mayor (3 + 4). Triste, oscuro.</li><li><b>Disminuido</b>: dos 3ª menores (3 + 3). Tenso, inestable.</li><li><b>Aumentado</b>: dos 3ª mayores (4 + 4). Suspenso, irreal.</li><li><b>Con 7ª</b>: maj7 (soñador), 7 (dominante, pide resolver), m7 (suave), m7♭5 (oscuro), °7 (dramático).</li></ul></details>
+      <details><summary>Inversiones: qué nota va en el bajo</summary><p>Un acorde no cambia de nombre por el orden de sus notas: ${n(0)}–${n(2)}–${n(4)} sigue siendo el mismo acorde si lo tocas ${n(2)}–${n(4)}–${n(0)}. Lo que importa es la nota <b>más grave</b> (el bajo):</p><ul><li><b>Estado fundamental</b>: la raíz en el bajo. Estable.</li><li><b>1ª inversión</b>: la 3ª en el bajo. Se escribe ${c.cifrado}/${cifra(c.notas[2])} o «6».</li><li><b>2ª inversión</b>: la 5ª en el bajo. ${c.cifrado}/${cifra(c.notas[4])} o «6/4». Inestable.</li><li><b>3ª inversión</b> (solo con 7ª): la 7ª en el bajo. «4/2».</li></ul><p>Las inversiones sirven para que el bajo se mueva poco, por grados, y la mano no salte de un acorde a otro: en el piano, C → F/C → G/B → C (Do, Fa, Sol, Do) se toca casi sin mover la mano.</p></details>
       <details><summary>Cadencias: cómo terminan las frases</summary><ul><li><b>Perfecta (auténtica)</b>: V → I. Punto final.</li><li><b>Plagal</b>: IV → I. Final suave, el «amén».</li><li><b>Rota</b>: V → vi. Parece que termina y no: sorpresa.</li><li><b>Semicadencia</b>: termina en V. Una pregunta, una coma.</li></ul></details>
       <details><summary>¿Por qué la dominante pide volver?</summary><p>Porque tiene la <b>sensible</b> (${nombre(sensible(c))}), a medio tono de la tónica, y con la 7ª forma un <b>tritono</b> (${n(3)}–${nombre(sensible(c))}), el intervalo más inestable. Al resolver, la sensible sube a ${n(0)} y la 7ª (${n(3)}) baja a ${n(2)}: las dos tensiones se relajan a la vez.</p></details>
       <details><summary>Dominantes secundarias, paso a paso</summary><ol><li>Elige el acorde al que quieres llegar (por ejemplo, el ${c.modo === "mayor" ? `ii: ${nombre(c.notas[1])} menor` : `iv: ${nombre(c.notas[3])} menor`}).</li><li>Sube una quinta desde su raíz.</li><li>Haz ahí un acorde mayor con 7ª. Ese es su V7.</li></ol><p>La nota nueva suele ser la sensible del acorde destino, por eso «lo convierte en tónica» por un instante. Puedes encadenarlas: V7/V → V7 → I, o V7/ii → ii → V7 → I.</p></details>
@@ -644,6 +704,8 @@ export async function mostrar(main, [pestanaRuta]) {
     if (cel) { cambiarClave(cel.dataset.clave); elegido = null; pintar(); return; }
     const md = t.closest("[data-modo]");
     if (md) { if (md.dataset.modo !== modo) { modo = md.dataset.modo; setPref("armoniaModo", modo); elegido = null; pintar(); } return; }
+    const bInv = t.closest("[data-inv]");
+    if (bInv && elegido) { if (sonando === "inversiones") parar(); mostrarAcorde(elegido, { inv: Number(bInv.dataset.inv) }); return; }
     const ac = t.closest("[data-acorde]");
     if (ac) { if (!sonando?.startsWith("prog")) parar(); mostrarAcorde(ac.dataset.acorde); $("#acorde-vista")?.classList.remove("plegada"); return; }
 
@@ -654,8 +716,22 @@ export async function mostrar(main, [pestanaRuta]) {
       case "tocar-escala": tocarEscala(b); break;
       case "tocar-violin": tocarEscalaViolin(b); break;
       case "prog": tocarProgresion(b); break;
-      case "sel-tocar": if (r) tocarAcorde(r.acorde); break;
-      case "sel-arpegio": if (r) { parar(); arpegio(r.acorde); } break;
+      case "sel-tocar": if (r) tocarAcorde(r.acorde, 1.1, inversion); break;
+      case "sel-arpegio": if (r) { parar(); arpegio(r.acorde, inversion); } break;
+      case "sel-inversiones": {
+        if (!r) break;
+        if (sonando === "inversiones") { parar(); break; }
+        parar();
+        sonando = "inversiones";
+        const id = elegido, n = r.acorde.notas.length;
+        botonSonando(b);
+        for (let k = 0; k < n; k++) despues(k * 1300, () => {
+          mostrarAcorde(id, { inv: k });
+          botonSonando(main.querySelector('[data-accion="sel-inversiones"]'));
+        });
+        despues(n * 1300 + 200, parar);
+        break;
+      }
       case "sel-resolver": {
         const destino = r?.tipo === "sec" ? r.sec.destino : r?.resuelve;
         if (!destino) break;

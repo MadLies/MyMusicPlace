@@ -617,6 +617,19 @@ td.alto, td.bajo { color: #b07400; font-weight: 600; }
 .av-plegar { display: none; }
 .av-notas { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0; }
 .av-texto { font-size: .9rem; }
+.av-inv { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 10px 0; margin: 4px 0 10px; }
+.av-inv-cab { margin-bottom: 6px; font-size: .92rem; }
+.av-inv-cab small { color: var(--muted); }
+.inv-opciones { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; }
+.inv-opciones button { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 4px; line-height: 1.15; min-width: 0; }
+.inv-opciones button span { font-size: .72rem; color: var(--muted); }
+.inv-opciones button b { font-size: .86rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.inv-txt { font-size: .86rem; margin: 8px 0; color: var(--muted); }
+.inv-txt b { color: var(--text); }
+.inv-txt .inv-bajo { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.inv-rom { font: 700 1rem Georgia, "Times New Roman", serif; color: var(--accent); }
+.av-inv .btn-mini { display: inline-flex; align-items: center; gap: 4px; }
+.av-inv .btn-mini .ico { width: 13px; height: 13px; }
 .av-texto p { margin: 0 0 6px; }
 .av-acciones { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
 .av-acciones .ico { width: 1em; height: 1em; }
