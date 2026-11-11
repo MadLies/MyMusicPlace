@@ -1,5 +1,5 @@
 {
-  "generado": "2026-11-10T15:12:32+00:00",
+  "generado": "2026-11-11T16:30:21+00:00",
   "canciones": [
     {
       "id": "armonica/Flaca",
@@ -318,6 +318,22 @@
       "fuente": "Melodía de Ludwig van Beethoven (1824, dominio público); versión para violín escrita por madlies, con arcadas y digitación",
       "stats": {
         "nivel": 2
+      },
+      "extras": []
+    },
+    {
+      "id": "violin/08_ReyDeLaMontana",
+      "instrumento": "violin",
+      "carpeta": "08_ReyDeLaMontana",
+      "titulo": "En la gruta del rey de la montaña",
+      "subtitulo": "Edvard Grieg (Peer Gynt) · In the Hall of the Mountain King",
+      "musicxml": "Violin/08_ReyDeLaMontana/03_exportados/musicxml/08_ReyDeLaMontana.musicxml",
+      "pdf": "Violin/08_ReyDeLaMontana/03_exportados/pdf/08_ReyDeLaMontana.pdf",
+      "mscz": "Violin/08_ReyDeLaMontana/02_editable/08_ReyDeLaMontana.mscz",
+      "notas": "Violin/08_ReyDeLaMontana/Como_estudiarla.md",
+      "fuente": "Melodía de Edvard Grieg, «En la gruta del rey de la montaña» (Peer Gynt, 1875; dominio público), en Re menor para violín; archivo .mscz descargado de MuseScore por madlies (sin arreglista indicado)",
+      "stats": {
+        "nivel": 3
       },
       "extras": []
     }

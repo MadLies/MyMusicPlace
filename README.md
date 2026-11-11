@@ -71,7 +71,8 @@ Partituras/
 ├── Violin/
 │   ├── _Plantillas/             Violin_en_blanco.mscz / .musicxml (1 pauta, clave de sol)
 │   ├── 01_CuerdasAlAire … 06_HimnoALaAlegria   6 piezas para empezar (con dedos y nombres de notas)
-│   └── 07_OdeToJoy/             versión completa de madlies, con arcadas
+│   ├── 07_OdeToJoy/             versión completa de madlies, con arcadas
+│   └── 08_ReyDeLaMontana/       Grieg, «En la gruta del rey de la montaña» (Re menor)
 └── Armonica/
     ├── _Plantillas/             Tablatura_en_blanco.tab + tab2pdf.py (tablaturas → PDF)
     ├── Flaca/
