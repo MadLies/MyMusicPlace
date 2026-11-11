@@ -30,6 +30,11 @@ Partituras de piano y violín y tablaturas de armónica, organizadas por instrum
 - **Temporizador de práctica** (botón con flecha en la cabecera, en todas las páginas): 20, 30, 45 min,
   1 h o la duración que quieras; pausa, +5 min y aviso al terminar con campana, el título de la pestaña
   y, si lo permites, una notificación del sistema. Sigue contando aunque cambies de página o recargues.
+- **Prácticas** (`#/practicas`): rutinas de estudio por instrumento (armónica, piano, violín), cada una
+  con su lista de ejercicios, minutos, una nota y, si quieres, un enlace a una canción o herramienta.
+  En el reloj eliges instrumento y rutina: cuenta cada ejercicio, avisa al terminarlo y espera a que
+  pulses «Siguiente» (o «+5 min a este»). Las rutinas se guardan en el navegador y se pueden exportar
+  e importar como archivo JSON para llevarlas a otro equipo o al sitio privado.
 - **Editor MIDI**: piano roll (lápiz y selección, rejilla con tresillos, zoom), varias pistas con
   instrumento General MIDI, canal, volumen, pan, mute y solo; carriles de velocidad, pitch bend,
   volumen, pan, expresión, pedal y modulación; tempo y compás; deshacer, copiar/pegar, duplicar,

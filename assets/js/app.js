@@ -20,6 +20,7 @@ const rutas = [
   { re: /^\/?$/, vista: () => import("./vistas/inicio.js"), nav: "inicio" },
   { re: /^\/armonica\/([^/]+)$/, vista: () => import("./vistas/cancion.js"), nav: "inicio" },
   { re: /^\/(piano|violin)\/([^/]+)$/, vista: () => import("./vistas/partitura.js"), nav: "inicio" },
+  { re: /^\/practicas(?:\/(armonica|piano|violin))?\/?$/, vista: () => import("./vistas/practicas.js"), nav: "practicas" },
   { re: /^\/guia$/, vista: () => import("./vistas/guia.js"), nav: "guia" },
   { re: /^\/afinador(?:\/(cromatico|armonica|violin))?$/, vista: () => import("./vistas/afinador.js"), nav: "afinador" },
   { re: /^\/metronomo$/, vista: () => import("./vistas/metronomo.js"), nav: "metronomo" },
